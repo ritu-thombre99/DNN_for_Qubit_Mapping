@@ -7,7 +7,7 @@ from qiskit.converters import circuit_to_dag
 from qiskit.transpiler.passes import Unroller
 
 
-def circuit_analysis(circuit, size_backend, show=False):
+def circuit_analysis(backend, circuit, size_backend, show=False):
     '''Funzione che mi ritorna il numero di qubits del circuito,
     il numero di CNot per ogni coppia e sua inversa,
     il numero di misure per ogni qubit
@@ -18,7 +18,10 @@ def circuit_analysis(circuit, size_backend, show=False):
     #Unroll circuit
     pass_ = Unroller(['u1', 'u2', 'u3', 'cx', 'id'])
     pm = PassManager(pass_)
-    new_circ = pm.run(circuit)
+    # new_circ = pm.run(circuit)
+    # need to transpile before passing to run
+    new_circ = transpile(circuit, backend=backend, optimization_level=0)
+    new_circ = pm.run(new_circ)
 
     if show == True:
         new_circ.draw(output='mpl').show()

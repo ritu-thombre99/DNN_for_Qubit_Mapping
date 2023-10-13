@@ -4,9 +4,10 @@ from qiskit import *
 from qiskit.providers.ibmq import *
 from qiskit.visualization import plot_histogram, plot_gate_map, plot_circuit_layout
 
-
-
-IBMQ.save_account('a4b0b917da2aa2df695ff329567268e62d3862608d4fa50b6cd0ab1781853d3c7616f71d33dc55a33c1ed9af072f7ba6c9dc163400b2a1b54ce720462ad06b78', overwrite=True)
+f = open("../ibm_token.txt",'r')
+my_token = f.readlines()[0]
+f.close()
+IBMQ.save_account(my_token, overwrite=True)
 IBMQ.load_account()
 
 def Backend_Topology(name, refresh, show = True, datatime = False):
@@ -18,6 +19,7 @@ def Backend_Topology(name, refresh, show = True, datatime = False):
 
     name = Nome del backend
     '''
+    print("Backend topology:",datatime)
     Topology_properties = {}
     impossible_length = 100000
     impossible_error = 100000
@@ -31,6 +33,7 @@ def Backend_Topology(name, refresh, show = True, datatime = False):
 
     coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
     if datatime != False:
+        print(backend.properties(datetime=datatime))
         prp = backend.properties(datetime=datatime).to_dict()
     else:
         prp = backend.properties(refresh=refresh).to_dict()

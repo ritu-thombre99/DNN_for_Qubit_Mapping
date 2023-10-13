@@ -1,5 +1,6 @@
 from Circuit_features import *
 from Backend_features import *
+import qiskit
 from qiskit.transpiler import PassManager
 from qiskit.converters import circuit_to_dag
 from qiskit.transpiler.passes import Unroller
@@ -10,7 +11,7 @@ import os.path
 from qiskit.transpiler.passes import LookaheadSwap, StochasticSwap
 from qiskit.transpiler import CouplingMap
 
-
+from qiskit.visualization import plot_circuit_layout
 
 def pick_label(circ, backend, coupling_map, optimization_level, show=False):
     '''
@@ -33,18 +34,19 @@ def pick_label(circ, backend, coupling_map, optimization_level, show=False):
         depths.append(depth + lc_qc.depth())
         depths.append(depth + st_qc.depth())
         #print('depth=', depth, ' depth + routing_lc_qc= ', depth + lc_qc.depth(), ' depth + routing_st_qc=',depth + st_qc.depth())
-
     if depths.index(min(depths)) < 2:
         print('na')
         if show == True:
             plot_circuit_layout(new_circ_lv3_na, backend).show()
         return new_circ_lv3_na._layout.get_physical_bits()
 
+
     if depths.index(min(depths)) >= 2:
         print('not na')
         if show == True:
             plot_circuit_layout(new_circ_lv3, backend).show()
         return new_circ_lv3._layout.get_physical_bits()
+        
 
 
 
@@ -61,14 +63,20 @@ def add_line(circuit, backend_name, refresh=True, show=True, optimization_level=
     provider.backends(simulator=False)
     backend = provider.get_backend(backend_name)
     basis_gats = backend.configuration().basis_gates
+    # print(basis_gats)
     pass_ = Unroller(basis_gats)
     pm = PassManager(pass_)
-    new_circ = pm.run(circuit)
+
+    # new_circ = pm.run(circuit)
+    # need to transpile before passing to run
+    new_circ = transpile(circuit, backend=backend, optimization_level=0)
+    new_circ = pm.run(new_circ)
 
     size_backend = len(backend.properties(refresh=refresh).to_dict()['qubits'])
 
-    CA = circuit_analysis(circuit, size_backend=size_backend, show=show)
+    CA = circuit_analysis(backend, circuit, size_backend=size_backend, show=show)
     #print(CA)
+    print(datatime)
     BT = Backend_Topology(backend_name, refresh, show, datatime=datatime)
     #print(BT)
     QP = Qubit_properties(backend_name, refresh, datatime=datatime)
@@ -163,13 +171,15 @@ def update_csv(file_name, backend_name, rows_to_add, random_n_qubit=5, random_de
 import datetime
 iteration = [1]
 for it in range(iteration[0]):
-    month = random.randint(1,5)
-    day = random.randint(1,29)
-    data = datetime.date(2020, month, day)
+    # month = random.randint(1,5)
+    # day = random.randint(1,29)
+    # data = datetime.date(2023, month, day)
+    data = datetime.datetime.today() - datetime.timedelta(days=random.randint(1,150))
     n_qs = [2,3,4,5]
     #backend_name = ['ibmq_vigo', 'ibmq_ourense',  'ibmq_rome', 'ibmq_essex','ibmq_burlington']
-    backend_name_1 = ['ibmq_burlington']
-    file_name = '/home/rschiattarella/dataset/dataset_tesi/Dataset_Prova_4_08.csv'
+    backend_name_1 = ['ibm_lagos']
+    file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/Dataset_Prova_4_08.csv'
+    print(data)
 
     for backend in backend_name_1:
         for n_q in n_qs:
