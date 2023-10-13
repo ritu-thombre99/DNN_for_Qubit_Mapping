@@ -11,7 +11,7 @@ IBMQ.save_account(my_token, overwrite=True)
 IBMQ.load_account()
 
 def Backend_Topology(name, refresh, show = True, datatime = False):
-    '''Funzione che mi restituisce tutte le possibili coppie tra gli slot fisici
+    '''Funzione che mi restituisce tutte le possibili coppie tra gli slot fisicigit push http://example.com/repo.git
     in un dizionario, i cui valori sono una lista contenente error gate ed gate length(ns) del cx tra la coppia,
     i valori sono fissati a  100000, se la coppia di slot non è topologicamente legata
     ______________________________________________________________________________________________________

@@ -38,14 +38,20 @@ def pick_label(circ, backend, coupling_map, optimization_level, show=False):
         print('na')
         if show == True:
             plot_circuit_layout(new_circ_lv3_na, backend).show()
-        return new_circ_lv3_na._layout.get_physical_bits()
+        # print(new_circ_lv3_na._layout.input_qubit_mapping)
+        qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3_na._layout.input_qubit_mapping).get_physical_bits())
+        return qbit_mapping
+        # return new_circ_lv3_na._layout.get_physical_bits()
 
 
     if depths.index(min(depths)) >= 2:
         print('not na')
         if show == True:
             plot_circuit_layout(new_circ_lv3, backend).show()
-        return new_circ_lv3._layout.get_physical_bits()
+        # print(new_circ_lv3._layout.input_qubit_mapping)
+        qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3._layout.input_qubit_mapping).get_physical_bits())
+        return qbit_mapping
+        # return new_circ_lv3._layout.get_physical_bits()
         
 
 
@@ -128,7 +134,10 @@ def update_csv(file_name, backend_name, rows_to_add, random_n_qubit=5, random_de
     '''
     if os.path.exists(file_name) == True:
         df = pd.read_csv(file_name)
-        start = len(list(df['Index']))
+        print(df.columns)
+        # start = len(list(df['Index']))
+        start = len(list(df['Unnamed: 0']))
+        
 
     else:
         start = 0
@@ -177,10 +186,10 @@ for it in range(iteration[0]):
     data = datetime.datetime.today() - datetime.timedelta(days=random.randint(1,150))
     n_qs = [2,3,4,5]
     #backend_name = ['ibmq_vigo', 'ibmq_ourense',  'ibmq_rome', 'ibmq_essex','ibmq_burlington']
-    backend_name_1 = ['ibm_lagos']
+    backend_name_1 = ['ibm_lagos','ibm_perth','ibm_nairobi']
     file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/Dataset_Prova_4_08.csv'
     print(data)
 
     for backend in backend_name_1:
         for n_q in n_qs:
-            update_csv(file_name, backend, rows_to_add=1, random_n_qubit=5, random_depth=2, min_n_qubit=5, datatime=data, show=True)
+            update_csv(file_name, backend, rows_to_add=1, random_n_qubit=7, random_depth=2, min_n_qubit=7, datatime=data, show=True)
