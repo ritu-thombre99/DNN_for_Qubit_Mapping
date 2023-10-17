@@ -74,7 +74,7 @@ def clear_dataset(df):
     df = df.drop('edge_length_42', axis=1)
     return df
 
-df = pd.read_csv('/home/rschiattarella/dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
+df = pd.read_csv('/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
 df = clear_dataset(df)
 
 
@@ -104,11 +104,23 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X_st, y, test_size=0.10, random_state=1)
 
 from sklearn.utils import class_weight
-class_weight_0 = class_weight.compute_class_weight('balanced', np.unique(y_train[:,0]), y_train[:,0])
-class_weight_1 = class_weight.compute_class_weight('balanced', np.unique(y_train[:,1]), y_train[:,1])
-class_weight_2 = class_weight.compute_class_weight('balanced', np.unique(y_train[:,2]), y_train[:,2])
-class_weight_3 = class_weight.compute_class_weight('balanced', np.unique(y_train[:,3]), y_train[:,3])
-class_weight_4 = class_weight.compute_class_weight('balanced', np.unique(y_train[:,4]), y_train[:,4])
+
+
+class_weight_0 = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(y_train[:,0]), y=y_train[:,0])
+# class_weight_0 = dict(enumerate(class_weight_0))
+
+class_weight_1 = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(y_train[:,1]), y=y_train[:,1])
+# class_weight_1 = dict(enumerate(class_weight_1))
+
+class_weight_2 = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(y_train[:,2]), y=y_train[:,2])
+# class_weight_2 = dict(enumerate(class_weight_2))
+
+class_weight_3 = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(y_train[:,3]), y=y_train[:,3])
+# class_weight_3 = dict(enumerate(class_weight_3))
+
+class_weight_4 = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(y_train[:,4]), y=y_train[:,4])
+# class_weight_4 = dict(enumerate(class_weight_4))
+
 
 print(class_weight_0, class_weight_1, class_weight_2, class_weight_3, class_weight_4 )
 
@@ -153,19 +165,27 @@ slot4 = Dense(units=6, activation='softmax', name='slot4')(A4_4)
 
 merged = Model(inputs=[A0], outputs=[slot0, slot1, slot2, slot3, slot4])
 print(merged.summary())
-#plot_model(merged, to_file='/home/rschiattarella/Tesi/Project/5qBurlington/NN2_b.png', show_shapes=True)
+#plot_model(merged, to_file='/home/ritu/Tesi/Project/5qBurlington/NN2_b.png', show_shapes=True)
 
-adam_optimizer = keras.optimizers.adam(learning_rate=0.0005)
+# adam_optimizer = keras.optimizers.adam(learning_rate=0.0005)
+adam_optimizer = keras.optimizers.Adam(learning_rate=0.0005)
 merged.compile(loss={'slot0':'categorical_crossentropy','slot1':'categorical_crossentropy','slot2':'categorical_crossentropy',
                      'slot3':'categorical_crossentropy','slot4':'categorical_crossentropy'},
                optimizer=adam_optimizer, metrics=['accuracy'])
 
 
+# history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:6],'slot1':y_train[:,6:12],'slot2':y_train[:,12:18],'slot3':y_train[:,18:24],
+#                               'slot4':y_train[:,24:30]},
+#            epochs=175, batch_size=128, verbose=1, validation_split=0.10, shuffle=True,
+#                      class_weight={'slot0':class_weight_0, 'slot1':class_weight_1, 'slot2':class_weight_2,
+#                                      'slot3':class_weight_3, 'slot4':class_weight_4})
+
+
 history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:6],'slot1':y_train[:,6:12],'slot2':y_train[:,12:18],'slot3':y_train[:,18:24],
                               'slot4':y_train[:,24:30]},
            epochs=175, batch_size=128, verbose=1, validation_split=0.10, shuffle=True,
-                     class_weight={'slot0':class_weight_0, 'slot1':class_weight_1, 'slot2':class_weight_2,
-                                     'slot3':class_weight_3, 'slot4':class_weight_4})
+                     class_weight={0:class_weight_0, 1:class_weight_1, 2:class_weight_2,
+                                     3:class_weight_3, 4:class_weight_4})
 
 ''''
 history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:6],'slot1':y_train[:,6:12],'slot2':y_train[:,12:18],'slot3':y_train[:,18:24],
@@ -175,10 +195,10 @@ history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:6],'slot1':y_tra
 '''
 # serialize model to JSON
 model_json = merged.to_json()
-with open("/home/rschiattarella/Tesi/Project/5qBurlington/models/NN_5Q_Balanced1_drop4.json", "w") as json_file:
+with open("/home/ritu/Tesi/Project/5qBurlington/models/NN_5Q_Balanced1_drop4.json", "w") as json_file:
     json_file.write(model_json)
 # serialize weights to HDF5
-merged.save_weights("/home/rschiattarella/Tesi/Project/5qBurlington/models/NN_5Q_Balanced1_drop4.h5")
+merged.save_weights("/home/ritu/Tesi/Project/5qBurlington/models/NN_5Q_Balanced1_drop4.h5")
 print("Saved model to disk")
 '''
 

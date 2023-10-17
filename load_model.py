@@ -71,7 +71,7 @@ def clear_dataset(df):
     df = df.drop('edge_length_42', axis=1)
     return df
 
-df = pd.read_csv('/home/rschiattarella/dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
+df = pd.read_csv('/home/ritu/dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
 df = clear_dataset(df)
 
 
@@ -98,7 +98,7 @@ y_test = building_label(y_test)
 
 
 # load json and create model
-json_file = open('/home/rschiattarella/Tesi/Project/5qBurlington/models/NN_5Q_Balanced1_drop4.json', 'r')
+json_file = open('/home/ritu/Tesi/Project/5qBurlington/models/NN_5Q_Balanced1_drop4.json', 'r')
 loaded_model_json = json_file.read()
 json_file.close()
 loaded_model = model_from_json(loaded_model_json)
@@ -106,7 +106,7 @@ loaded_model = model_from_json(loaded_model_json)
 #plot_model(loaded_model, to_file='/home/rob/Scrivania/Tesi/Files/5qBurlington/NN_ReteBuona.png', show_shapes=True)
 
 # load weights into new model
-loaded_model.load_weights("/home/rschiattarella/Tesi/Project/5qBurlington/models/NN_5Q_Balanced1_drop4.h5")
+loaded_model.load_weights("/home/ritu/Tesi/Project/5qBurlington/models/NN_5Q_Balanced1_drop4.h5")
 print("Loaded model from disk")
 adam_optimizer = keras.optimizers.adam(learning_rate=0.0005)
 loaded_model.compile(loss={'slot0':'categorical_crossentropy','slot1':'categorical_crossentropy','slot2':'categorical_crossentropy',
