@@ -74,7 +74,7 @@ def clear_dataset(df):
     df = df.drop('edge_length_42', axis=1)
     return df
 
-df = pd.read_csv('/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
+df = pd.read_csv('dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
 df = clear_dataset(df)
 
 
