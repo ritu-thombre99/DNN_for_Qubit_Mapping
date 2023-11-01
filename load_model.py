@@ -42,7 +42,7 @@ def clear_dataset(df):
     df = df.drop_duplicates()
     for i in range(5):
         df = df.drop('measure_' + str(i), axis=1)
-    Histo_Dataset(df, N_qubits=5)
+    # Histo_Dataset(df, N_qubits=5)
     #Rimozione Features non interessanti
     df = df.drop('N_measure', axis = 1)
     df = df.drop('edge_error_02', axis=1)

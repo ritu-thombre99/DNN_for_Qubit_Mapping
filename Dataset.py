@@ -15,9 +15,9 @@ from qiskit.visualization import plot_circuit_layout
 
 def pick_label(circ, backend, coupling_map, optimization_level, show=False):
     '''
-    Funzione che restituisce il dizionario con il mapping, scegliendo come label layout quello che minimizza la depth
-    del circuito tra dense layout e noise_adaptive sommata alla depth delle operazioni dopo il routing.
-    In questa maniera tengo anche conto di qual'è il layout che permette di minimizzare le operazioni di swap
+    Function that returns the dictionary with the mapping, choosing as the label layout the one that minimizes the depth
+    of the circuit between dense layout and noise_adaptive added to the depth of operations after routing.
+    In this way I also take into account which layout allows swap operations to be minimized
     '''
     new_circ_lv3 = transpile(circ, backend=backend, optimization_level=optimization_level)
     new_circ_lv3_na = transpile(circ, backend=backend, optimization_level=optimization_level,layout_method='noise_adaptive')
@@ -34,35 +34,37 @@ def pick_label(circ, backend, coupling_map, optimization_level, show=False):
         depths.append(depth + lc_qc.depth())
         depths.append(depth + st_qc.depth())
         #print('depth=', depth, ' depth + routing_lc_qc= ', depth + lc_qc.depth(), ' depth + routing_st_qc=',depth + st_qc.depth())
+    print("Depth:",depths)
     if depths.index(min(depths)) < 2:
         print('na')
         if show == True:
             plot_circuit_layout(new_circ_lv3_na, backend).show()
-        # print(new_circ_lv3_na._layout.input_qubit_mapping)
-        qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3_na._layout.input_qubit_mapping).get_physical_bits())
-        return qbit_mapping
-        # return new_circ_lv3_na._layout.get_physical_bits()
+        # qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3_na._layout.input_qubit_mapping).get_virtual_bits())
+        # return qbit_mapping
+        print(new_circ_lv3_na._layout.get_physical_bits())
+        return new_circ_lv3_na._layout.get_physical_bits()
 
 
-    if depths.index(min(depths)) >= 2:
+    # if depths.index(min(depths)) >= 2:
+    else:
         print('not na')
         if show == True:
             plot_circuit_layout(new_circ_lv3, backend).show()
-        # print(new_circ_lv3._layout.input_qubit_mapping)
-        qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3._layout.input_qubit_mapping).get_physical_bits())
-        return qbit_mapping
-        # return new_circ_lv3._layout.get_physical_bits()
+        # qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3._layout.input_qubit_mapping).get_virtual_bits())
+        # return qbit_mapping
+        print(new_circ_lv3._layout.get_physical_bits())
+        return new_circ_lv3._layout.get_physical_bits()
         
 
 
 
 def add_line(circuit, backend_name, refresh=True, show=True, optimization_level=3, datatime=False):
     '''
-    Funzione che mi costruisce righe del dataset ritornandomi la fatta da una prima componente che è
-    una lista contenente i titoli delle features, e una seconda lista contenente i valori corrispondenti.
-    _____________________________________________________________________________________________________
-    I Titoli dei label sono le ultime features della riga: il titolo è il nome della slot fisica, il valore
-    è il nome del qubit virtuale
+    Function that constructs rows of the dataset returning me the one made from a first component which is
+    a list containing the titles of the features, and a second list containing the corresponding values.
+    _____________________________________________________________________________________________________________________
+    The label titles are the last features of the row: the title is the name of the physical slot, the value
+    is the name of the virtual qubit
     '''
 
     provider = IBMQ.get_provider(hub='ibm-q')
@@ -125,16 +127,16 @@ def add_line(circuit, backend_name, refresh=True, show=True, optimization_level=
 def update_csv(file_name, backend_name, rows_to_add, random_n_qubit=5, random_depth=10, show = False, min_n_qubit=1, datatime=False):
 
     '''
-    Funzione che aggiunge la riga al dataset contenuto in file_name.
+    Function that adds the row to the dataset contained in file_name.
     __________________________________________________________________________________
-    backend_name = backend su cui fare il mapping
-    rows_to_add = numero di righe da aggiungere variano random il numero di qubit e la depth del circuito
-    random_n_qubit = estremo superiore di randint (default 5)
-    random_depth = estremo superiore di randint per la depth (default 10)
+    backend_name = backend on which to map
+    rows_to_add = number of lines to add varies randomly the number of qubits and the depth of the circuit
+    random_n_qubit = upper bound of randint (default 5)
+    random_depth = upper bound of randint for depth (default 10)
     '''
     if os.path.exists(file_name) == True:
         df = pd.read_csv(file_name)
-        print(df.columns)
+        # print(df.columns)
         # start = len(list(df['Index']))
         start = len(list(df['Unnamed: 0']))
         
@@ -143,7 +145,7 @@ def update_csv(file_name, backend_name, rows_to_add, random_n_qubit=5, random_de
         start = 0
     print(start)
     for j in range(start, start + rows_to_add):
-        print(j, backend_name, j-start+1)
+        # print(j, backend_name, j-start+1)
         n_qubit = random.randint(min_n_qubit, random_n_qubit)
         depth = random.randint(1, random_depth)
         try:
@@ -152,7 +154,7 @@ def update_csv(file_name, backend_name, rows_to_add, random_n_qubit=5, random_de
             l = add_line(circ,backend_name, optimization_level=3, refresh=True, show= show, datatime=datatime)
 
         except qiskit.transpiler.exceptions.TranspilerError :
-            print('Impossibile mappare il circuito: Generando nuovo qc')
+            print('Unable to map the circuit: Generating new sth')
             error = 1
             while error==1:
                 try:
@@ -187,7 +189,8 @@ for it in range(iteration[0]):
     n_qs = [2,3,4,5]
     #backend_name = ['ibmq_vigo', 'ibmq_ourense',  'ibmq_rome', 'ibmq_essex','ibmq_burlington']
     backend_name_1 = ['ibm_lagos','ibm_perth','ibm_nairobi']
-    file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/Dataset_Prova_4_08.csv'
+    # file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/Dataset_Prova_4_08.csv'
+    file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv'
     print(data)
 
     for backend in backend_name_1:

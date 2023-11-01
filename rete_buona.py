@@ -41,46 +41,51 @@ def nan_equal(a, b):
         return False
     return True
 
-def clear_dataset(df):
+def clear_dataset(df, n_qubits):
     df = df.drop_duplicates()
     for i in range(5):
         df = df.drop('measure_' + str(i), axis=1)
-    Histo_Dataset(df, N_qubits=5)
+    # Histo_Dataset(df, N_qubits=n_qubits)
     #Rimozione Features non interessanti
     df = df.drop('N_measure', axis = 1)
-    df = df.drop('edge_error_02', axis=1)
-    df = df.drop('edge_length_02', axis=1)
-    df = df.drop('edge_error_03', axis=1)
-    df = df.drop('edge_length_03', axis=1)
-    df = df.drop('edge_error_04', axis=1)
-    df = df.drop('edge_length_04', axis=1)
-    df = df.drop('edge_error_14', axis=1)
-    df = df.drop('edge_length_14', axis=1)
-    df = df.drop('edge_error_20', axis=1)
-    df = df.drop('edge_length_20', axis=1)
-    df = df.drop('edge_error_23', axis=1)
-    df = df.drop('edge_length_23', axis=1)
-    df = df.drop('edge_error_24', axis=1)
-    df = df.drop('edge_length_24', axis=1)
-    df = df.drop('edge_error_30', axis=1)
-    df = df.drop('edge_length_30', axis=1)
-    df = df.drop('edge_error_32', axis=1)
-    df = df.drop('edge_length_32', axis=1)
-    df = df.drop('edge_error_40', axis=1)
-    df = df.drop('edge_length_40', axis=1)
-    df = df.drop('edge_error_41', axis=1)
-    df = df.drop('edge_length_41', axis=1)
-    df = df.drop('edge_error_42', axis=1)
-    df = df.drop('edge_length_42', axis=1)
+    to_drop = []
+    for c in df.columns:
+        if "edge_error" in c or "edge_length" in c:
+            to_drop.append(c)
+    df = df.drop(to_drop,axis=1)
+    # df = df.drop('edge_error_02', axis=1)
+    # df = df.drop('edge_length_02', axis=1)
+    # df = df.drop('edge_error_03', axis=1)
+    # df = df.drop('edge_length_03', axis=1)
+    # df = df.drop('edge_error_04', axis=1)
+    # df = df.drop('edge_length_04', axis=1)
+    # df = df.drop('edge_error_14', axis=1)
+    # df = df.drop('edge_length_14', axis=1)
+    # df = df.drop('edge_error_20', axis=1)
+    # df = df.drop('edge_length_20', axis=1)
+    # df = df.drop('edge_error_23', axis=1)
+    # df = df.drop('edge_length_23', axis=1)
+    # df = df.drop('edge_error_24', axis=1)
+    # df = df.drop('edge_length_24', axis=1)
+    # df = df.drop('edge_error_30', axis=1)
+    # df = df.drop('edge_length_30', axis=1)
+    # df = df.drop('edge_error_32', axis=1)
+    # df = df.drop('edge_length_32', axis=1)
+    # df = df.drop('edge_error_40', axis=1)
+    # df = df.drop('edge_length_40', axis=1)
+    # df = df.drop('edge_error_41', axis=1)
+    # df = df.drop('edge_length_41', axis=1)
+    # df = df.drop('edge_error_42', axis=1)
+    # df = df.drop('edge_length_42', axis=1)
     return df
 
 df = pd.read_csv('/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
-df = clear_dataset(df)
+df = clear_dataset(df, 7)
 
-
-X = df.iloc[:, 3:56].values
-y = df.iloc[:, 56:].values
-
+last_7 = len(df.columns)-7
+X = df.iloc[:, 3:last_7].values
+y = df.iloc[:, last_7:].values
+print(len(X),len(y))
 ''''
 for i in range(X.shape[0]):
     for j in range(X.shape[1]):
