@@ -191,7 +191,7 @@ for it in range(iteration[0]):
     #backend_name = ['ibmq_vigo', 'ibmq_ourense',  'ibmq_rome', 'ibmq_essex','ibmq_burlington']
     backend_name_1 = ['ibm_lagos','ibm_perth','ibm_nairobi']
     # file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/Dataset_Prova_4_08.csv'
-    file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv'
+    file_name = 'dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv'
     print(data)
 
     for backend in backend_name_1:
