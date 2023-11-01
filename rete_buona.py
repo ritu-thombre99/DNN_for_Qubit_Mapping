@@ -178,17 +178,26 @@ slot3 = Dense(units=6, activation='softmax', name='slot3')(A4_3)
 A3_4 = Dense(256, activation='relu')(drop)
 drop_4 = Dropout(0.65)(A3_4)
 A4_4 = Dense(128, activation='relu')(drop_4)
-slot4 = Dense(units=6, activation='softmax', name='slot4')(A4_4)
+slot4 = Dense(units=6, activation='softmax', name='slot4')(A4_4) 
+
+A3_5 = Dense(256, activation='relu')(drop)
+A4_5 = Dense(128, activation='relu')(A3_5)
+slot5 = Dense(units=6, activation='softmax', name='slot5')(A4_5)
+
+A3_6 = Dense(256, activation='relu')(drop)
+A4_6 = Dense(128, activation='relu')(A3_6)
+slot6 = Dense(units=6, activation='softmax', name='slot6')(A4_6)
 
 
-merged = Model(inputs=[A0], outputs=[slot0, slot1, slot2, slot3, slot4])
+
+merged = Model(inputs=[A0], outputs=[slot0, slot1, slot2, slot3, slot4,slot5,slot6])
 print(merged.summary())
 #plot_model(merged, to_file='/home/ritu/Tesi/Project/5qBurlington/NN2_b.png', show_shapes=True)
 
 # adam_optimizer = keras.optimizers.adam(learning_rate=0.0005)
 adam_optimizer = keras.optimizers.Adam(learning_rate=0.0005)
 merged.compile(loss={'slot0':'categorical_crossentropy','slot1':'categorical_crossentropy','slot2':'categorical_crossentropy',
-                     'slot3':'categorical_crossentropy','slot4':'categorical_crossentropy'},
+                     'slot3':'categorical_crossentropy','slot4':'categorical_crossentropy','slot5':'categorical_crossentropy','slot6':'categorical_crossentropy'},
                optimizer=adam_optimizer, metrics=['accuracy'])
 
 
@@ -200,10 +209,10 @@ merged.compile(loss={'slot0':'categorical_crossentropy','slot1':'categorical_cro
 
 
 history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:6],'slot1':y_train[:,6:12],'slot2':y_train[:,12:18],'slot3':y_train[:,18:24],
-                              'slot4':y_train[:,24:30]},
+                              'slot4':y_train[:,24:30],'slot5':y_train[:,30:36],'slot6':y_train[:,36:42]},
            epochs=175, batch_size=128, verbose=1, validation_split=0.10, shuffle=True,
                      class_weight={0:class_weight_0, 1:class_weight_1, 2:class_weight_2,
-                                     3:class_weight_3, 4:class_weight_4})
+                                     3:class_weight_3, 4:class_weight_4, 5:class_weight_5, 6:class_weight_6})
 
 ''''
 history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:6],'slot1':y_train[:,6:12],'slot2':y_train[:,12:18],'slot3':y_train[:,18:24],
@@ -222,7 +231,7 @@ print("Saved model to disk")
 
 print('\n# Evaluate on test data')
 results = merged.evaluate(X_test, {'slot0': y_test[:,0:6],'slot1':y_test[:,6:12],'slot2':y_test[:,12:18],'slot3':y_test[:,18:24],
-                                   'slot4': y_test[:,24:30]}, batch_size=128)
+                                   'slot4': y_test[:,24:30],'slot5':y_test[:,30:36],'slot6':y_test[:,36:42]}, batch_size=128)
 
 # Evaluate the model on the test data using `evaluate`
 print('\n# Evaluate on test data con metodo artigianale')
@@ -237,8 +246,8 @@ def pred_layout(l):
     layout=[]
     for i in range(len(l[0])):
         layout_i = []
-        for slots in l[:5]:
-            if np.argmax(slots[i]) != 5:
+        for slots in l[:7]:
+            if np.argmax(slots[i]) != 7:
                 layout_i.append(np.argmax(slots[i]))
             else:
                 layout_i.append(np.nan)
@@ -262,8 +271,8 @@ def pred_layout_diff_elem(l):
         check = 0
         while check != 1:
             layout_i = []
-            for slots in l[:5]:
-                if np.argmax(slots[i]) != 5:
+            for slots in l[:7]:
+                if np.argmax(slots[i]) != 7:
                     layout_i.append(np.argmax(slots[i]))
                 else:
                     layout_i.append(np.nan)
