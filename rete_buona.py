@@ -48,6 +48,9 @@ def clear_dataset(df, n_qubits):
     # Histo_Dataset(df, N_qubits=n_qubits)
     #Rimozione Features non interessanti
     df = df.drop('N_measure', axis = 1)
+    # TO DO
+    # remove edges which are not in coupling maps
+    
     to_drop = []
     for c in df.columns:
         if "edge_error" in c or "edge_length" in c:
