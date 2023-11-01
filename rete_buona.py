@@ -43,19 +43,26 @@ def nan_equal(a, b):
 
 def clear_dataset(df, n_qubits):
     df = df.drop_duplicates()
-    for i in range(5):
+    for i in range(n_qubits):
         df = df.drop('measure_' + str(i), axis=1)
     # Histo_Dataset(df, N_qubits=n_qubits)
     #Rimozione Features non interessanti
     df = df.drop('N_measure', axis = 1)
     # TO DO
     # remove edges which are not in coupling maps
-    
+    connections = ['01','10','12','21','13','31','35','53','45','54','56','65']
+    to_keep = []
+    for c in connections:
+        to_keep.append("edge_error_"+c)    
+        to_keep.append("edge_length_"+c)
     to_drop = []
     for c in df.columns:
         if "edge_error" in c or "edge_length" in c:
-            to_drop.append(c)
+            if c not in to_keep:
+                to_drop.append(c)
     df = df.drop(to_drop,axis=1)
+
+    
     # df = df.drop('edge_error_02', axis=1)
     # df = df.drop('edge_length_02', axis=1)
     # df = df.drop('edge_error_03', axis=1)
@@ -89,7 +96,7 @@ df = clear_dataset(df, 7)
 last_7 = len(df.columns)-7
 X = df.iloc[:, 3:last_7].values
 y = df.iloc[:, last_7:].values
-print(len(X),len(y))
+print("Lengths:",len(X),len(y))
 ''''
 for i in range(X.shape[0]):
     for j in range(X.shape[1]):
@@ -128,10 +135,12 @@ class_weight_3 = class_weight.compute_class_weight(class_weight='balanced', clas
 # class_weight_3 = dict(enumerate(class_weight_3))
 
 class_weight_4 = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(y_train[:,4]), y=y_train[:,4])
-# class_weight_4 = dict(enumerate(class_weight_4))
 
+class_weight_5 = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(y_train[:,5]), y=y_train[:,5])
 
-print(class_weight_0, class_weight_1, class_weight_2, class_weight_3, class_weight_4 )
+class_weight_6 = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(y_train[:,6]), y=y_train[:,6])
+
+print(class_weight_0, class_weight_1, class_weight_2, class_weight_3, class_weight_4, class_weight_5, class_weight_6 )
 
 y_layout_train = y_train
 y_layout_test = y_test
@@ -234,6 +243,7 @@ def pred_layout(l):
             else:
                 layout_i.append(np.nan)
         layout.append(layout_i)
+    print(layout)
     return layout
 
 def controlla_rip(l):

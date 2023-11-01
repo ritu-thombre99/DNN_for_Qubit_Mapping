@@ -91,6 +91,7 @@ def add_line(circuit, backend_name, refresh=True, show=True, optimization_level=
     #print(QP)
 
     coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
+    print(coupling_map)
 
     label = pick_label(new_circ, backend=backend, coupling_map=coupling_map, optimization_level=optimization_level, show = show)
     #print(label)
