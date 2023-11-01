@@ -21,11 +21,11 @@ def customize_OH_withNan(vec):
     label = []
     for n in vec:
         l = []
-        if n in range(0,5):
+        if n in range(0,7):
             l = num_to_vec(n, length)
         else:
             #print('ciao')
-            l = num_to_vec(n=5, len_vec=length)
+            l = num_to_vec(n=7, len_vec=length)
 
         label = label + l
     return label

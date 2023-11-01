@@ -150,43 +150,46 @@ y_test = building_label(y_test)
 
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "4"
-
+print("TEST")
+print(X_train.shape)
+print(y_train[1,:])
 A0 = Input(shape=(X_train.shape[1], ), name='input')
 A1 = Dense(264, activation='relu')(A0)
 A2 = Dense(1024, activation='relu',kernel_regularizer=keras.regularizers.l1(0.001))(A1)
 drop = Dropout(0.65)(A2)
 
 #Example of 'Slot Structure'
+num_slots = 8
 A3_0 = Dense(256, activation='relu')(drop)
 A4_0 = Dense(128, activation='relu')(A3_0)
-slot0 = Dense(units=6, activation='softmax', name='slot0')(A4_0)
+slot0 = Dense(units=num_slots, activation='softmax', name='slot0')(A4_0)
 
 A3_1 = Dense(256, activation='relu')(drop)
 A4_1 = Dense(128, activation='relu')(A3_1)
-slot1 = Dense(units=6, activation='softmax', name='slot1')(A4_1)
+slot1 = Dense(units=num_slots, activation='softmax', name='slot1')(A4_1)
 
 
 A3_2 = Dense(256, activation='relu')(drop)
 A4_2 = Dense(128, activation='relu')(A3_2)
-slot2 = Dense(units=6, activation='softmax', name='slot2')(A4_2)
+slot2 = Dense(units=num_slots, activation='softmax', name='slot2')(A4_2)
 
 
 A3_3 = Dense(256, activation='relu')(drop)
 A4_3 = Dense(128, activation='relu')(A3_3)
-slot3 = Dense(units=6, activation='softmax', name='slot3')(A4_3)
+slot3 = Dense(units=num_slots, activation='softmax', name='slot3')(A4_3)
 
 A3_4 = Dense(256, activation='relu')(drop)
-drop_4 = Dropout(0.65)(A3_4)
-A4_4 = Dense(128, activation='relu')(drop_4)
-slot4 = Dense(units=6, activation='softmax', name='slot4')(A4_4) 
+A4_4 = Dense(128, activation='relu')(A3_4)
+slot4 = Dense(units=num_slots, activation='softmax', name='slot4')(A4_4) 
 
 A3_5 = Dense(256, activation='relu')(drop)
 A4_5 = Dense(128, activation='relu')(A3_5)
-slot5 = Dense(units=6, activation='softmax', name='slot5')(A4_5)
+slot5 = Dense(units=num_slots, activation='softmax', name='slot5')(A4_5)
 
 A3_6 = Dense(256, activation='relu')(drop)
-A4_6 = Dense(128, activation='relu')(A3_6)
-slot6 = Dense(units=6, activation='softmax', name='slot6')(A4_6)
+drop_4 = Dropout(0.65)(A3_6)
+A4_6 = Dense(128, activation='relu')(drop_4)
+slot6 = Dense(units=num_slots, activation='softmax', name='slot6')(A4_6)
 
 
 
@@ -208,8 +211,8 @@ merged.compile(loss={'slot0':'categorical_crossentropy','slot1':'categorical_cro
 #                                      'slot3':class_weight_3, 'slot4':class_weight_4})
 
 
-history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:6],'slot1':y_train[:,6:12],'slot2':y_train[:,12:18],'slot3':y_train[:,18:24],
-                              'slot4':y_train[:,24:30],'slot5':y_train[:,30:36],'slot6':y_train[:,36:42]},
+history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:8],'slot1':y_train[:,8:16],'slot2':y_train[:,16:24],'slot3':y_train[:,24:32],
+                              'slot4':y_train[:,32:40],'slot5':y_train[:,40:48],'slot6':y_train[:,48:56]},
            epochs=175, batch_size=128, verbose=1, validation_split=0.10, shuffle=True,
                      class_weight={0:class_weight_0, 1:class_weight_1, 2:class_weight_2,
                                      3:class_weight_3, 4:class_weight_4, 5:class_weight_5, 6:class_weight_6})
@@ -230,8 +233,8 @@ print("Saved model to disk")
 '''
 
 print('\n# Evaluate on test data')
-results = merged.evaluate(X_test, {'slot0': y_test[:,0:6],'slot1':y_test[:,6:12],'slot2':y_test[:,12:18],'slot3':y_test[:,18:24],
-                                   'slot4': y_test[:,24:30],'slot5':y_test[:,30:36],'slot6':y_test[:,36:42]}, batch_size=128)
+results = merged.evaluate(X_test, {'slot0': y_test[:,0:8],'slot1':y_test[:,8:16],'slot2':y_test[:,16:24],'slot3':y_test[:,24:32],
+                                   'slot4': y_test[:,32:40],'slot5':y_test[:,40:48],'slot6':y_test[:,48:56]}, batch_size=128)
 
 # Evaluate the model on the test data using `evaluate`
 print('\n# Evaluate on test data con metodo artigianale')
@@ -292,7 +295,7 @@ def pred_layout_diff_elem(l):
 
 
 layout_train_pred = np.array(pred_layout(y_pred_train))
-layout_test_pred = np.array(pred_layout(y_pred_test))
+layout_test_pred = np.array(pred_layout(y_pred_test))  
 layout_train_pred_nr = np.array(pred_layout_diff_elem(y_pred_train))
 layout_test_pred_nr = np.array(pred_layout_diff_elem(y_pred_test))
 
@@ -315,7 +318,6 @@ for i in range(y_test.shape[0]):
         count_test_nr = count_test_nr + 1
 print('acc_Test', count_test/y_test.shape[0])
 print('acc_Test_nr', count_test_nr/y_test.shape[0])
-
 
 ''''
 output_dense_pred_train = y_pred_train[5]
