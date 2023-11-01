@@ -79,8 +79,13 @@ def clear_dataset(df, n_qubits):
     # df = df.drop('edge_length_42', axis=1)
     return df
 
-df = pd.read_csv('/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
+df = pd.read_csv('dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
 df = clear_dataset(df, 7)
+
+
+X = df.iloc[:, 3:56].values
+y = df.iloc[:, 56:].values
+>>>>>>> bf533c4659a8ab1005f660a0e35c2609b107d784
 
 last_7 = len(df.columns)-7
 X = df.iloc[:, 3:last_7].values
