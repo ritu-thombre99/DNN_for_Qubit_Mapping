@@ -23,8 +23,8 @@ def circuit_analysis(backend, circuit, size_backend, show=False):
     new_circ = transpile(circuit, backend=backend, optimization_level=0)
     new_circ = pm.run(new_circ)
 
-    if show == True:
-        new_circ.draw(output='mpl').show()
+    # if show == True:
+    #     new_circ.draw(output='mpl').show()
 
 
     dag = circuit_to_dag(new_circ)

@@ -37,8 +37,8 @@ def pick_label(circ, backend, coupling_map, optimization_level, show=False):
     print("Depth:",depths)
     if depths.index(min(depths)) < 2:
         print('na')
-        if show == True:
-            plot_circuit_layout(new_circ_lv3_na, backend).show()
+        # if show == True:
+        #     plot_circuit_layout(new_circ_lv3_na, backend).show()
         # qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3_na._layout.input_qubit_mapping).get_virtual_bits())
         # return qbit_mapping
         print(new_circ_lv3_na._layout.get_physical_bits())
@@ -48,8 +48,8 @@ def pick_label(circ, backend, coupling_map, optimization_level, show=False):
     # if depths.index(min(depths)) >= 2:
     else:
         print('not na')
-        if show == True:
-            plot_circuit_layout(new_circ_lv3, backend).show()
+        # if show == True:
+        #     plot_circuit_layout(new_circ_lv3, backend).show()
         # qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3._layout.input_qubit_mapping).get_virtual_bits())
         # return qbit_mapping
         print(new_circ_lv3._layout.get_physical_bits())
@@ -95,7 +95,6 @@ def add_line(circuit, backend_name, refresh=True, show=True, optimization_level=
 
     label = pick_label(new_circ, backend=backend, coupling_map=coupling_map, optimization_level=optimization_level, show = show)
     #print(label)
-
 
     Title_names =['last_update_date', 'backend_name'] + list(CA.keys())[:3] + list(CA['cx'].keys()) + list(CA['measure'].keys()) + list(BT['coupling'].keys())
     for i in range(size_backend):
@@ -153,7 +152,6 @@ def update_csv(file_name, backend_name, rows_to_add, random_n_qubit=5, random_de
             circ = random_circuit(n_qubit, depth, measure=True)
             #circ.draw(output='mpl').show()
             l = add_line(circ,backend_name, optimization_level=3, refresh=True, show= show, datatime=datatime)
-
         except qiskit.transpiler.exceptions.TranspilerError :
             print('Unable to map the circuit: Generating new sth')
             error = 1
@@ -196,5 +194,5 @@ for it in range(iteration[0]):
 
     for backend in backend_name_1:
         # for n_q in n_qs:
-        for _ in range(20):
+        for _ in range(10000):
             update_csv(file_name, backend, rows_to_add=1, random_n_qubit=7, random_depth=2, min_n_qubit=7, datatime=data, show=True)

@@ -45,7 +45,7 @@ def clear_dataset(df, n_qubits):
     df = df.drop_duplicates()
     for i in range(n_qubits):
         df = df.drop('measure_' + str(i), axis=1)
-    # Histo_Dataset(df, N_qubits=n_qubits)
+    Histo_Dataset(df, N_qubits=n_qubits)
     #Rimozione Features non interessanti
     df = df.drop('N_measure', axis = 1)
     # TO DO

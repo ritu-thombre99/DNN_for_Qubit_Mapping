@@ -63,24 +63,30 @@ def pulisci_dataset(df,N_rows_to_delete,layout):
     return df
 
 
-# def Histo_Dataset(df, N_qubits, color='blue', save=False, title=None):
-#     '''
-#     Function that returns the histograms with the occurrences of all the slots:
-#     if N_qubits < 5 then the N_qubits index on the histogram indicates the Nan (since the
-#     qubits to map range from (0 to N_qubits-1)
-#     ________________________________________
-#     '''
-#     for i in range(5):
-#         df1 = df.groupby(str(i)).count()
-#         if N_qubits != 5:
-#             df1 = df1.fillna(N_qubits)
-#         y = list(df1.iloc[:,0].values)
-#         x = [n for n in range(N_qubits)]
-#         plt.bar(x,y,align='center', color=color)
-#         plt.xlabel('virtual qubit')
-#         plt.ylabel('Frequency_slot'+str(i))
-#         plt.show()
-#         if save == True:
-#             plt.savefig(str(title)+'_'+str(i))
+def Histo_Dataset(df, N_qubits, color='blue', save=False, title=None):
+    '''
+    Function that returns the histograms with the occurrences of all the slots:
+    if N_qubits < 5 then the N_qubits index on the histogram indicates the Nan (since the
+    qubits to map range from (0 to N_qubits-1)
+    ________________________________________
+    '''
+    for i in range(N_qubits):
+        df1 = df.groupby(str(i)).count()
+        if N_qubits != 7:
+            df1 = df1.fillna(N_qubits)
+
+        new_df = df1.iloc[:,0]
+        for i in range(7):
+            if i not in new_df.keys():
+                new_df[i] = 0
+        y = list(dict(sorted(new_df.items())).values()) #list(df1.iloc[:,0].values)
+        x = [n for n in range(N_qubits)]
+        print(x,y)
+        plt.bar(x,y,align='center', color=color)
+        plt.xlabel('virtual qubit')
+        plt.ylabel('Frequency_slot'+str(i))
+        plt.show()
+        if save == True:
+            plt.savefig(str(title)+'_'+str(i))
 
 

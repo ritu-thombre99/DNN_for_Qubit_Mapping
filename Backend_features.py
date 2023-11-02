@@ -28,8 +28,8 @@ def Backend_Topology(name, refresh, show = True, datatime = False):
     backend = provider.get_backend(name)
     #print(backend.configuration().basis_gates)
 
-    if show == True:
-        plot_gate_map(backend).show()
+    # if show == True:
+    #     plot_gate_map(backend).show()
 
     coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
     if datatime != False:
