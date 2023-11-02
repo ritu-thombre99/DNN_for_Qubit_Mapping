@@ -195,5 +195,6 @@ for it in range(iteration[0]):
     print(data)
 
     for backend in backend_name_1:
-        for n_q in n_qs:
+        # for n_q in n_qs:
+        for _ in range(20):
             update_csv(file_name, backend, rows_to_add=1, random_n_qubit=7, random_depth=2, min_n_qubit=7, datatime=data, show=True)
