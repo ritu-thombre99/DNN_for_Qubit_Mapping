@@ -21,11 +21,12 @@ def pick_label(circ, backend, coupling_map, optimization_level, show=False):
     '''
     new_circ_lv3 = transpile(circ, backend=backend, optimization_level=optimization_level)
     new_circ_lv3_na = transpile(circ, backend=backend, optimization_level=optimization_level,layout_method='noise_adaptive')
+    new_circ_lv3_sabre = transpile(circ, backend=backend, optimization_level=optimization_level,layout_method='sabre',routing_method='sabre')
     #plot_circuit_layout(new_circ_lv3_na, backend).show()
     #plot_circuit_layout(new_circ_lv3, backend).show()
     cp = CouplingMap(couplinglist=coupling_map)
     depths = []
-    for qc in [new_circ_lv3_na, new_circ_lv3]:
+    for qc in [new_circ_lv3_na, new_circ_lv3,new_circ_lv3_sabre]:
         depth = qc.depth()
         pass_manager = PassManager(LookaheadSwap(coupling_map=cp))
         lc_qc = pass_manager.run(qc)
@@ -39,21 +40,22 @@ def pick_label(circ, backend, coupling_map, optimization_level, show=False):
         print('na')
         # if show == True:
         #     plot_circuit_layout(new_circ_lv3_na, backend).show()
-        # qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3_na._layout.input_qubit_mapping).get_virtual_bits())
-        # return qbit_mapping
         print(new_circ_lv3_na._layout.get_physical_bits())
         return new_circ_lv3_na._layout.get_physical_bits()
 
-
-    # if depths.index(min(depths)) >= 2:
-    else:
+    if depths.index(min(depths)) >= 2 and depths.index(min(depths)) <4:
         print('not na')
         # if show == True:
         #     plot_circuit_layout(new_circ_lv3, backend).show()
-        # qbit_mapping = (qiskit.transpiler.Layout(input_dict=new_circ_lv3._layout.input_qubit_mapping).get_virtual_bits())
-        # return qbit_mapping
         print(new_circ_lv3._layout.get_physical_bits())
         return new_circ_lv3._layout.get_physical_bits()
+
+    else:
+        print('SABRE')
+        # if show == True:
+        #     plot_circuit_layout(new_circ_lv3_sabre, backend).show()
+        print(new_circ_lv3_sabre._layout.get_physical_bits())
+        return new_circ_lv3_sabre._layout.get_physical_bits()
         
 
 
@@ -191,8 +193,13 @@ for it in range(iteration[0]):
     # file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/Dataset_Prova_4_08.csv'
     file_name = 'dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv'
     print(data)
-
-    for backend in backend_name_1:
-        # for n_q in n_qs:
-        for _ in range(10000):
+    
+    # for n_q in n_qs:
+    for _ in range(200):
+        for backend in backend_name_1:
             update_csv(file_name, backend, rows_to_add=1, random_n_qubit=7, random_depth=2, min_n_qubit=7, datatime=data, show=True)
+
+
+
+
+            
