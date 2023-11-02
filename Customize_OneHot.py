@@ -14,18 +14,18 @@ def customize_OH(vec):
 
     return label
 
-def customize_OH_withNan(vec):
+def customize_OH_withNan(vec, num_qubits):
     '''Funzione che ritorna un customize one-hot codificando i Nan come 5'''
     vec = list(vec)
     length = len(vec)+1
     label = []
     for n in vec:
         l = []
-        if n in range(0,7):
+        if n in range(0,num_qubits):
             l = num_to_vec(n, length)
         else:
             #print('ciao')
-            l = num_to_vec(n=7, len_vec=length)
+            l = num_to_vec(n=num_qubits, len_vec=length)
 
         label = label + l
     return label

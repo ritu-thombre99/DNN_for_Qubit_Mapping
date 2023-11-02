@@ -17,6 +17,7 @@ tf.random.set_seed(123)
 
 
 
+num_qubits = 7
 
 def accuracy(y_pred, y_train):
     count = 0
@@ -26,10 +27,10 @@ def accuracy(y_pred, y_train):
     return count/y_train.shape[0]
 
 
-def building_label(y):
+def building_label(y,num_qubits):
     y_label = []
     for row in range(y.shape[0]):
-        label = customize_OH_withNan(list(y[row]))
+        label = customize_OH_withNan(list(y[row]), num_qubits)
         y_label.append(label)
     y_label = np.array(y_label)
     return y_label
@@ -90,12 +91,12 @@ def clear_dataset(df, n_qubits):
     return df
 
 df = pd.read_csv('dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
-df = clear_dataset(df, 7)
+df = clear_dataset(df, num_qubits)
 
 
-last_7 = len(df.columns)-7
-X = df.iloc[:, 3:last_7].values
-y = df.iloc[:, last_7:].values
+last_num_qubits = len(df.columns)-num_qubits
+X = df.iloc[:, 3:last_num_qubits].values
+y = df.iloc[:, last_num_qubits:].values
 print("Lengths:",len(X),len(y))
 ''''
 for i in range(X.shape[0]):
@@ -145,8 +146,8 @@ print(class_weight_0, class_weight_1, class_weight_2, class_weight_3, class_weig
 y_layout_train = y_train
 y_layout_test = y_test
 
-y_train = building_label(y_train)
-y_test = building_label(y_test)
+y_train = building_label(y_train, num_qubits)
+y_test = building_label(y_test, num_qubits)
 
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "4"
@@ -245,12 +246,12 @@ for prediction in y_pred_train:
     print(len(prediction[0]))
 
 
-def pred_layout(l):
+def pred_layout(l, num_qubits):
     layout=[]
     for i in range(len(l[0])):
         layout_i = []
-        for slots in l[:7]:
-            if np.argmax(slots[i]) != 7:
+        for slots in l[:num_qubits]:
+            if np.argmax(slots[i]) != num_qubits:
                 layout_i.append(np.argmax(slots[i]))
             else:
                 layout_i.append(np.nan)
@@ -268,7 +269,7 @@ def controlla_rip(l):
 
     return rip
 
-def pred_layout_diff_elem(l):
+def pred_layout_diff_elem(l,num_qubits):
     layout=[]
     for i in range(len(l[0])):
         check = 0
@@ -294,10 +295,10 @@ def pred_layout_diff_elem(l):
 
 
 
-layout_train_pred = np.array(pred_layout(y_pred_train))
-layout_test_pred = np.array(pred_layout(y_pred_test))  
-layout_train_pred_nr = np.array(pred_layout_diff_elem(y_pred_train))
-layout_test_pred_nr = np.array(pred_layout_diff_elem(y_pred_test))
+layout_train_pred = np.array(pred_layout(y_pred_train), num_qubits)
+layout_test_pred = np.array(pred_layout(y_pred_test), num_qubits)  
+layout_train_pred_nr = np.array(pred_layout_diff_elem(y_pred_train), num_qubits)
+layout_test_pred_nr = np.array(pred_layout_diff_elem(y_pred_test), num_qubits)
 
 count_train = 0
 count_train_nr = 0
