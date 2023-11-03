@@ -11,6 +11,10 @@ from keras.layers import Input, Dense, Dropout
 from keras.models import Model
 from keras.utils import plot_model
 
+import qiskit
+from Circuit_features import *
+from Backend_features import *
+from qiskit.providers.ibmq import *
 
 np.random.seed(123)
 tf.random.set_seed(123)
@@ -49,9 +53,22 @@ def clear_dataset(df, n_qubits):
     Histo_Dataset(df, N_qubits=n_qubits)
     #Rimozione Features non interessanti
     df = df.drop('N_measure', axis = 1)
-    # TO DO
     # remove edges which are not in coupling maps
-    connections = ['01','10','12','21','13','31','35','53','45','54','56','65']
+    # connections = ['01','10','12','21','13','31','35','53','45','54','56','65']
+    connections = []
+    provider = IBMQ.get_provider(hub='ibm-q')
+    provider.backends(simulator=False)
+    if n_qubits == 7:
+        backend = provider.get_backend('ibm_nairobi')
+        coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
+        for tup in coupling_map:
+            connections.append(str(tup[0])+str(tup[1]))
+    else:
+        backend = provider.get_backend('ibm_brisbane')
+        coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
+        for tup in coupling_map:
+            connections.append(str(tup[0])+str(tup[1]))
+    print("Connections:",connections)
     to_keep = []
     for c in connections:
         to_keep.append("edge_error_"+c)    
@@ -295,10 +312,10 @@ def pred_layout_diff_elem(l,num_qubits):
 
 
 
-layout_train_pred = np.array(pred_layout(y_pred_train), num_qubits)
-layout_test_pred = np.array(pred_layout(y_pred_test), num_qubits)  
-layout_train_pred_nr = np.array(pred_layout_diff_elem(y_pred_train), num_qubits)
-layout_test_pred_nr = np.array(pred_layout_diff_elem(y_pred_test), num_qubits)
+layout_train_pred = np.array(pred_layout(y_pred_train, num_qubits))
+layout_test_pred = np.array(pred_layout(y_pred_test,num_qubits))  
+layout_train_pred_nr = np.array(pred_layout_diff_elem(y_pred_train,num_qubits))
+layout_test_pred_nr = np.array(pred_layout_diff_elem(y_pred_test,num_qubits))
 
 count_train = 0
 count_train_nr = 0
