@@ -139,5 +139,4 @@ def check_in_list(i, list):
             index.append(j)
         else:
             continue
-
     return index
