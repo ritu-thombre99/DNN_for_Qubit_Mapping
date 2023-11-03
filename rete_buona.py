@@ -275,8 +275,8 @@ def pred_layout_diff_elem(l,num_qubits):
         check = 0
         while check != 1:
             layout_i = []
-            for slots in l[:7]:
-                if np.argmax(slots[i]) != 7:
+            for slots in l[:num_qubits]:
+                if np.argmax(slots[i]) != num_qubits:
                     layout_i.append(np.argmax(slots[i]))
                 else:
                     layout_i.append(np.nan)
