@@ -44,9 +44,9 @@ def Backend_Topology(name, refresh, show = True, datatime = False):
     gates = prp['gates']
     cx_list = []
     for i in range(len(gates)):
+        # print(gates[i]['gate'])
         if gates[i]['gate'] == 'cx':
             cx_list.append([gates[i]])
-
     coupling = {}
     for i in range(len(prp['qubits'])):
         for j in range(len(prp['qubits'])):
