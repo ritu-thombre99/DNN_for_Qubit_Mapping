@@ -3,3 +3,4 @@ tensorflow~=2.2.0
 qiskit~=0.31.0
 scikit-learn
 protobuf==3.20.*
+matplotlib==1.18.5
