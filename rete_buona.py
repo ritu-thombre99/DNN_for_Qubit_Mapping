@@ -15,6 +15,7 @@ import qiskit
 from Circuit_features import *
 from Backend_features import *
 from qiskit.providers.ibmq import *
+import time
 
 np.random.seed(123)
 tf.random.set_seed(123)
@@ -50,7 +51,7 @@ def clear_dataset(df, n_qubits):
     df = df.drop_duplicates()
     for i in range(n_qubits):
         df = df.drop('measure_' + str(i), axis=1)
-    Histo_Dataset(df, N_qubits=n_qubits)
+    # Histo_Dataset(df, N_qubits=n_qubits)
     #Rimozione Features non interessanti
     df = df.drop('N_measure', axis = 1)
     # remove edges which are not in coupling maps
@@ -83,6 +84,10 @@ def clear_dataset(df, n_qubits):
     return df
 
 df = pd.read_csv('dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv')
+
+data_to_use = int(1*len(df))
+df = df.iloc[:data_to_use]
+print("Data size:",len(df))
 df = clear_dataset(df, num_qubits)
 
 
@@ -203,12 +208,15 @@ merged.compile(loss={'slot0':'categorical_crossentropy','slot1':'categorical_cro
 #                      class_weight={'slot0':class_weight_0, 'slot1':class_weight_1, 'slot2':class_weight_2,
 #                                      'slot3':class_weight_3, 'slot4':class_weight_4})
 
-
+start = time.time()
 history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:8],'slot1':y_train[:,8:16],'slot2':y_train[:,16:24],'slot3':y_train[:,24:32],
                               'slot4':y_train[:,32:40],'slot5':y_train[:,40:48],'slot6':y_train[:,48:56]},
-           epochs=175, batch_size=128, verbose=1, validation_split=0.10, shuffle=True,
+           epochs=125, batch_size=128, verbose=1, validation_split=0.10, shuffle=True,
                      class_weight={0:class_weight_0, 1:class_weight_1, 2:class_weight_2,
                                      3:class_weight_3, 4:class_weight_4, 5:class_weight_5, 6:class_weight_6})
+
+end = time.time()
+print("Time taken to train model:",end-start)
 
 ''''
 history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:6],'slot1':y_train[:,6:12],'slot2':y_train[:,12:18],'slot3':y_train[:,18:24],
@@ -248,7 +256,6 @@ def pred_layout(l, num_qubits):
             else:
                 layout_i.append(np.nan)
         layout.append(layout_i)
-    print(layout)
     return layout
 
 def controlla_rip(l):
@@ -341,7 +348,10 @@ pyplot.plot(history.history['val_slot5_accuracy'], label='val_slot5')
 pyplot.plot(history.history['val_slot6_accuracy'], label='val_slot6')
 #pyplot.plot(history.history['val_slot01234_accuracy'], label='slot_C01234')
 pyplot.legend()
+# pyplot.savefig('../accuracy.png')
 pyplot.show()
+
+from matplotlib import pyplot
 pyplot.plot(history.history['val_slot0_loss'], label='val_slot0_los')
 pyplot.plot(history.history['val_slot1_loss'], label='val_slot1_los')
 pyplot.plot(history.history['val_slot2_loss'], label='val_slot2_los')
@@ -351,4 +361,6 @@ pyplot.plot(history.history['val_slot5_loss'], label='val_slot5_los')
 pyplot.plot(history.history['val_slot6_loss'], label='val_slot6_los')
 #pyplot.plot(history.history['val_slot01234_loss'], label='slot_C01234_los')
 pyplot.legend()
+
+# pyplot.savefig('../loss.png')
 pyplot.show()
