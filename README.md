@@ -6,7 +6,7 @@ such as Grover’s circuit, Shor’s circuit, Quantum Fourier Transform, and var
 GHZ state preparation (5 hours)
 2. Test Neural Layout for larger circuits (4 hours)
 3. Add a new evaluation metric: the number of CNOT gates (CNOT gates are required to
-perform SWAPs) (2 hours)
+perform SWAPs) (2 hours): Create a different test dataset and test on it along with time taken to find the mapping
 4. Plotting all the results and organizing them (5 hours)
 5. Writing the final project report (10 hours)
 
