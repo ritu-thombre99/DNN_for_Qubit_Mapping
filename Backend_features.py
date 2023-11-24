@@ -45,7 +45,7 @@ def Backend_Topology(name, refresh, show = True, datatime = False):
     cx_list = []
     for i in range(len(gates)):
         # print(gates[i]['gate'])
-        if gates[i]['gate'] == 'cx':
+        if gates[i]['gate'] == 'cx' or gates[i]['gate'] == 'ecr':
             cx_list.append([gates[i]])
     coupling = {}
     for i in range(len(prp['qubits'])):

@@ -188,8 +188,8 @@ for it in range(iteration[0]):
     # data = datetime.date(2023, month, day)
     data = datetime.datetime.today() - datetime.timedelta(days=random.randint(1,150))
     n_qs = [2,3,4,5]
-    # backend_name_1 = [('ibm_brisbane',127)]
-    backend_name_1 = [('ibm_lagos',7),('ibm_perth',7),('ibm_nairobi',7)]
+    backend_name_1 = [('ibm_brisbane',127)]
+    # backend_name_1 = [('ibm_lagos',7),('ibm_perth',7),('ibm_nairobi',7)]
     # file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/Dataset_Prova_4_08.csv'
     file_name = 'dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv'
     print(data)
