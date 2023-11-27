@@ -82,30 +82,35 @@ edge_features -> ((t1_i,t2_i,readout_i),(t1_j,t2_j,readout_j),(edge_error_ij,edg
 
 """
 print("Creating dataset")
-X = []
-for i in tqdm(range(len(df))):
-    edge_features = []
-    for edge_i in range(num_qubits):
-        for edge_j in range(num_qubits):
-            if edge_i != edge_j:
-                cx = df["cx_"+str(edge_i)+str(edge_j)][i]
-                edge_error, edge_length  = 100000, 100000
-                if "edge_error_"+str(edge_i)+str(edge_j) in df.columns:
-                    edge_error = df["edge_error_"+str(edge_i)+str(edge_j)][i]
-                    edge_length = df["edge_length_"+str(edge_i)+str(edge_j)][i]
+
+def get_graph_features(input_df):
+    X = []
+    for i in tqdm(range(len(input_df))):
+        edge_features = []
+        for edge_i in range(num_qubits):
+            for edge_j in range(num_qubits):
+                if edge_i != edge_j:
+                    cx = input_df["cx_"+str(edge_i)+str(edge_j)][i]
+                    edge_error, edge_length  = 100000, 100000
+                    if "edge_error_"+str(edge_i)+str(edge_j) in df.columns:
+                        edge_error = input_df["edge_error_"+str(edge_i)+str(edge_j)][i]
+                        edge_length = input_df["edge_length_"+str(edge_i)+str(edge_j)][i]
+                    
+                    t1_i = input_df["T1_"+str(edge_i)][i]
+                    t2_i = input_df["T2_"+str(edge_i)][i]
+                    readout_i = input_df["readout_error_"+str(edge_i)][i]
                 
-                t1_i = df["T1_"+str(edge_i)][i]
-                t2_i = df["T2_"+str(edge_i)][i]
-                readout_i = df["readout_error_"+str(edge_i)][i]
-            
-                t1_j = df["T1_"+str(edge_j)][i]
-                t2_j = df["T2_"+str(edge_j)][i]
-                readout_j = df["readout_error_"+str(edge_j)][i]
-                
-                
-                edge_features.append(np.array([t1_i,t2_i,readout_i,t1_j,t2_j,readout_j,cx,edge_error,edge_length]))
-    X.append(np.array(edge_features).flatten())
-X = np.array(X)
+                    t1_j = input_df["T1_"+str(edge_j)][i]
+                    t2_j = input_df["T2_"+str(edge_j)][i]
+                    readout_j = input_df["readout_error_"+str(edge_j)][i]
+                    
+                    
+                    edge_features.append(np.array([t1_i,t2_i,readout_i,t1_j,t2_j,readout_j,cx,edge_error,edge_length]))
+        X.append(np.array(edge_features).flatten())
+    X = np.array(X)
+    return X
+
+X = get_graph_features(df)
 
 
 y_old =(df.iloc[:, last_num_qubits:].values)
@@ -201,7 +206,7 @@ def main():
         main()
     print("Train accuracy:",train_accuracy)
     print("Test accuracy:",test_accuracy)
-    f = open("models/mlp_edge_features__accuracy.txt","w")
+    f = open("models/mlp_edge_features_accuracy.txt","w")
     f.writelines("Train accuracy:"+str(train_accuracy))
     f.writelines("\nTest accuracy:"+str(test_accuracy))
     f.writelines("\nTraining time:"+str(del_t))

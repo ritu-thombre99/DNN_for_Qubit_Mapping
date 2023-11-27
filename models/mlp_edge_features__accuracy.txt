@@ -1,3 +1,0 @@
-Train accuracy:0.9013363307106282
-Test accuracy:0.8977528089887641
-Training time:6.05485200881958
