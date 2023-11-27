@@ -44,7 +44,18 @@ from qiskit.transpiler.passes import LookaheadSwap, StochasticSwap
 from qiskit.transpiler import CouplingMap
 
 from qiskit.visualization import plot_circuit_layout
+IBMQ.load_account()
+provider = IBMQ.get_provider(hub='ibm-q')
+provider.backends(simulator=False)
 
+backend_dict = {}
+# backend_names = ['ibm_brisbane','ibm_lagos','ibm_nairobi','ibm_perth']
+backend_names = ['ibm_lagos','ibm_nairobi','ibm_perth']
+for backend_name in backend_names:
+    backend = provider.get_backend(backend_name)
+    coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
+    backend_dict[backend_name] = coupling_map
+print(backend_dict)
 
 num_qubits = 7
 def clear_dataset(df, n_qubits):
@@ -56,18 +67,12 @@ def clear_dataset(df, n_qubits):
     # remove edges which are not in coupling maps
     # connections = ['01','10','12','21','13','31','35','53','45','54','56','65']
     connections = []
-    IBMQ.load_account()
-    provider = IBMQ.get_provider(hub='ibm-q')
-    provider.backends(simulator=False)
+    
     if n_qubits == 7:
-        backend = provider.get_backend('ibm_nairobi')
-        coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
-        for tup in coupling_map:
+        for tup in backend_dict['ibm_nairobi']:
             connections.append(str(tup[0])+str(tup[1]))
     else:
-        backend = provider.get_backend('ibm_brisbane')
-        coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
-        for tup in coupling_map:
+        for tup in backend_dict['ibm_brisbane']:
             connections.append(str(tup[0])+str(tup[1]))
     to_keep = []
     for c in connections:
@@ -187,8 +192,9 @@ def add_line(circuit, backend_name, refresh=True, show=True, optimization_level=
     #print(BT)
     QP = Qubit_properties(backend_name, refresh, datatime=datatime)
     #print(QP)
-
-    coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
+    # coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
+    coupling_map = backend_dict[backend_name]
+    
 
     label = pick_label(new_circ, backend=backend, coupling_map=coupling_map, optimization_level=optimization_level, show = show)
     #print(label)

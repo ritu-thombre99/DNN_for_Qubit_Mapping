@@ -26,8 +26,8 @@ def main():
         # data = datetime.date(2023, month, day)
         data = datetime.today() - timedelta(days=random.randint(1,150))
         n_qs = [2,3,4,5]
-        backend_name_1 = [('ibm_brisbane',127)]
-        # backend_name_1 = [('ibm_lagos',7),('ibm_perth',7),('ibm_nairobi',7)]
+        # backend_name_1 = [('ibm_brisbane',127)]
+        backend_name_1 = [('ibm_lagos',7),('ibm_perth',7),('ibm_nairobi',7)]
         # file_name = '/home/ritu/DNN_for_Qubit_Mapping/dataset/dataset_tesi/Dataset_Prova_4_08.csv'
         file_name = 'dataset/dataset_tesi/NN1_Dataset(<=10Cx)_balanced1.csv'
         print(data)
@@ -41,9 +41,6 @@ def main():
                 else:
                     update_csv(file_name, backend_name, rows_to_add=1, random_n_qubit=20, random_depth=2, min_n_qubit=9, datatime=data, show=True)
                     
-
-
-
 
 if __name__ == "__main__":
     main()
