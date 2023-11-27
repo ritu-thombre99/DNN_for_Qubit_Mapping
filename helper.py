@@ -69,7 +69,6 @@ def clear_dataset(df, n_qubits):
         coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
         for tup in coupling_map:
             connections.append(str(tup[0])+str(tup[1]))
-    print("Connections:",connections)
     to_keep = []
     for c in connections:
         to_keep.append("edge_error_"+c)    
@@ -140,21 +139,18 @@ def pick_label(circ, backend, coupling_map, optimization_level, show=False):
         print('na')
         # if show == True:
         #     plot_circuit_layout(new_circ_lv3_na, backend).show()
-        print(new_circ_lv3_na._layout.get_physical_bits())
         return new_circ_lv3_na._layout.get_physical_bits()
 
     if depths.index(min(depths)) >= 2 and depths.index(min(depths)) <4:
         print('not na')
         # if show == True:
         #     plot_circuit_layout(new_circ_lv3, backend).show()
-        print(new_circ_lv3._layout.get_physical_bits())
         return new_circ_lv3._layout.get_physical_bits()
 
     else:
         print('SABRE')
         # if show == True:
         #     plot_circuit_layout(new_circ_lv3_sabre, backend).show()
-        print(new_circ_lv3_sabre._layout.get_physical_bits())
         return new_circ_lv3_sabre._layout.get_physical_bits()
         
 
@@ -193,7 +189,6 @@ def add_line(circuit, backend_name, refresh=True, show=True, optimization_level=
     #print(QP)
 
     coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
-    print(coupling_map)
 
     label = pick_label(new_circ, backend=backend, coupling_map=coupling_map, optimization_level=optimization_level, show = show)
     #print(label)
@@ -279,3 +274,57 @@ def update_csv(file_name, backend_name, rows_to_add, random_n_qubit=5, random_de
         else:
             df.to_csv(file_name, mode='a',header=None)
 
+
+# dnn pred layout functions
+
+def pred_layout(l, num_qubits):
+    layout=[]
+    for i in range(len(l[0])):
+        layout_i = []
+        for slots in l[:num_qubits]:
+            if np.argmax(slots[i]) != num_qubits:
+                layout_i.append(np.argmax(slots[i]))
+            else:
+                layout_i.append(np.nan)
+        layout.append(layout_i)
+    return layout
+
+def controlla_rip(l):
+    rip = []
+    for i in range(len(l)):
+        for j in range(i+1, len(l)):
+            if l[i] == l[j]:
+                if (i,j) not in rip:
+                    rip.append((i,j))
+
+    return rip
+
+def pred_layout_diff_elem(l,num_qubits):
+    layout=[]
+    for i in range(len(l[0])):
+        check = 0
+        while check != 1:
+            layout_i = []
+            for slots in l[:num_qubits]:
+                if np.argmax(slots[i]) != num_qubits:
+                    layout_i.append(np.argmax(slots[i]))
+                else:
+                    layout_i.append(np.nan)
+            rip = controlla_rip(layout_i)
+            if rip == []:
+                check = 1
+            else:
+                for index in rip:
+                    if l[index[0]][i][layout_i[index[0]]] > l[index[1]][i][layout_i[index[1]]]:
+                        l[index[1]][i][layout_i[index[1]]]=0
+                    else:
+                        l[index[0]][i][layout_i[index[0]]] = 0
+
+        layout.append(layout_i)
+    return layout
+
+def get_labels(y):
+    labels = []
+    for i in range(len(y)):
+        labels.append(np.where(y[i]==np.max(y[i]))[0][0])
+    return labels
