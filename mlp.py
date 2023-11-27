@@ -5,7 +5,7 @@ import os
 import pandas as pd
 from tqdm import tqdm
 import numpy as np
-
+import sys
 import time
 from keras import optimizers
 from keras.models import Sequential
@@ -111,7 +111,6 @@ def get_pred():
     loss='mean_squared_error',
     metrics=[tf.keras.metrics.mean_squared_error])
     print(model.summary())
-
     start = time.time()
     history = model.fit(
         X_train,
@@ -122,10 +121,9 @@ def get_pred():
         verbose=1)
     end = time.time()
     print("Time taken to train the model:", end-start)
-
+    np.savetxt("models/mlp_train_loss.txt", (np.array(history.history['loss']),np.array(history.history['val_loss'])), delimiter=",")
     plt.plot(history.epoch, history.history['loss'] , label = "loss")
     plt.plot(history.epoch, history.history['val_loss'] , label = "val_loss")
-
 
     plt.legend()
     plt.show()
@@ -133,7 +131,7 @@ def get_pred():
 
     test_pred = model.predict(X_test)
     train_pred = model.predict(X_train)
-    return test_pred,train_pred
+    return model,test_pred,train_pred,end-start
 
 def get_labels(y):
     labels = []
@@ -142,7 +140,7 @@ def get_labels(y):
     return labels
 
 def main():
-    test_pred,train_pred = get_pred()
+    model,test_pred,train_pred,del_t = get_pred()
     count = 0
     for i in range(len(train_pred)):
         actual=get_labels(np.reshape(y_train[i],(7,7)))
@@ -162,6 +160,12 @@ def main():
         main()
     print("Train accuracy:",train_accuracy)
     print("Test accuracy:",test_accuracy)
+    f = open("models/mlp_accuracy.txt","w")
+    f.writelines("Train accuracy:"+str(train_accuracy))
+    f.writelines("\nTest accuracy:"+str(test_accuracy))
+    f.writelines("\nTraining time:"+str(del_t))
+    f.close()
+    model.save("models/mlp.keras")
     return 
 
 if __name__ == "__main__":
