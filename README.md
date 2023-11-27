@@ -1,7 +1,7 @@
 # Work Log
 TODO:
 1. Add a new evaluation metric: the number of CNOT gates (CNOT gates are required to
-perform SWAPs) (2 hours): Create a different test dataset and test on it along with time taken to find the mapping
+perform SWAPs) (2 hours)
 2. Plotting all the results and organizing them (5 hours)
 3. Writing the final project report (10 hours)
 
