@@ -29,7 +29,10 @@ def get_transpiled_circ_results(qc, backend, initial_layout):
     tqc = transpile(qc, backend=backend,initial_layout=initial_layout, optimization_level=0,seed_transpiler=13)
     tqc = pm.run(tqc)
     gates = dict(tqc.count_ops())
-    return gates['cx'], tqc.depth()
+    cx_gates = 0
+    if 'cx' in gates:
+        cx_gates = gates['cx']
+    return cx_gates, tqc.depth()
 
 
 
