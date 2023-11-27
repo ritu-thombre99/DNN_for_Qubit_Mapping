@@ -160,6 +160,8 @@ def main():
     test_accuracy = count/len(test_pred)
     if train_accuracy < 0.8 or test_accuracy < 0.8:
         main()
+    print("Train accuracy:",train_accuracy)
+    print("Test accuracy:",test_accuracy)
     return 
 
 if __name__ == "__main__":
