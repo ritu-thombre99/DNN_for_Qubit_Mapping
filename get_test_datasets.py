@@ -128,89 +128,90 @@ def get_qpe_circuits_for_phase(phase):
 
 def return_dataset():
     
-    # QFT circuits
-    print("Generating QFT circuits")
-    qft_circuits=[]
-    for i in range(1,8):
-        qft_gate = qft(num_qubits=i,is_inverse=False)
-        for j in range(8-i):
-            qr = QuantumRegister(7)
-            cr = ClassicalRegister(7)
-            qc = QuantumCircuit(qr,cr)
-            qc.append(qft_gate, qr[j:j+i])
-            qc.measure(qr,cr)
-            qft_circuits.append(qc)
-    # Addition circuits
-    print("Generating Addition circuits")
-    addition_circuits = []
-    with tqdm(total=10795) as pbar:
-        for bits in range(1,8):
-            max_num = 2**bits
-            for i in range(max_num):
-                for j in range(1,max_num):
-                    if i+j < max_num:
-                        qr = QuantumRegister(7)
-                        cr = ClassicalRegister(7)
-                        qc = QuantumCircuit(qr,cr)
-                        qft_gate = qft(num_qubits=bits,is_inverse=False)
-                        qc.append(qft_gate, qr[:bits])
+    # # QFT circuits
+    # print("Generating QFT circuits")
+    # qft_circuits=[]
+    # for i in range(1,8):
+    #     qft_gate = qft(num_qubits=i,is_inverse=False)
+    #     for j in range(8-i):
+    #         qr = QuantumRegister(7)
+    #         cr = ClassicalRegister(7)
+    #         qc = QuantumCircuit(qr,cr)
+    #         qc.append(qft_gate, qr[j:j+i])
+    #         qc.measure(qr,cr)
+    #         qft_circuits.append(qc)
+    # # Addition circuits
+    # print("Generating Addition circuits")
+    # addition_circuits = []
+    # with tqdm(total=10795) as pbar:
+    #     for bits in range(1,8):
+    #         max_num = 2**bits
+    #         for i in range(max_num):
+    #             for j in range(1,max_num):
+    #                 if i+j < max_num:
+    #                     qr = QuantumRegister(7)
+    #                     cr = ClassicalRegister(7)
+    #                     qc = QuantumCircuit(qr,cr)
+    #                     qft_gate = qft(num_qubits=bits,is_inverse=False)
+    #                     qc.append(qft_gate, qr[:bits])
 
-                        qc.append(subroutine_add_const(bits,i), qr[:bits])
-                        qc.append(subroutine_add_const(bits,j), qr[:bits])
+    #                     qc.append(subroutine_add_const(bits,i), qr[:bits])
+    #                     qc.append(subroutine_add_const(bits,j), qr[:bits])
 
-                        inverse_qft_gate = qft(num_qubits=bits,is_inverse=True)
-                        qc.append(inverse_qft_gate, qr[:bits])
-                        qc.measure(qr,cr)
+    #                     inverse_qft_gate = qft(num_qubits=bits,is_inverse=True)
+    #                     qc.append(inverse_qft_gate, qr[:bits])
+    #                     qc.measure(qr,cr)
 
-                        # counts = execute(qc,backend,shots=100).result().get_counts()
-                        # bin_val = int(list(counts.keys())[0],2)
-                        pbar.update(1)
-                        addition_circuits.append(qc)
-    # GHZ circuits
-    ghz_circuits=[]
-    for i in range(2,8):
-        ghz_circuit = generate_ghz(i)
-        for j in range(8-i):
-            qr = QuantumRegister(7)
-            cr = ClassicalRegister(7)
-            qc = QuantumCircuit(qr,cr)
-            qc.append(ghz_circuit, qr[j:j+i])
-            qc.measure(qr,cr)
-            ghz_circuits.append(qc)
-    ghz_rec_circuits=[]
-    for i in range(2,8):
-        ghz_circuit = generate_ghz_logn(i)
-        for j in range(8-i):
-            qr = QuantumRegister(7)
-            cr = ClassicalRegister(7)
-            qc = QuantumCircuit(qr,cr)
-            qc.append(ghz_circuit, qr[j:j+i])
-            qc.measure(qr,cr)
-            ghz_rec_circuits.append(qc)
+    #                     # counts = execute(qc,backend,shots=100).result().get_counts()
+    #                     # bin_val = int(list(counts.keys())[0],2)
+    #                     pbar.update(1)
+    #                     addition_circuits.append(qc)
+    # # GHZ circuits
+    # ghz_circuits=[]
+    # for i in range(2,8):
+    #     ghz_circuit = generate_ghz(i)
+    #     for j in range(8-i):
+    #         qr = QuantumRegister(7)
+    #         cr = ClassicalRegister(7)
+    #         qc = QuantumCircuit(qr,cr)
+    #         qc.append(ghz_circuit, qr[j:j+i])
+    #         qc.measure(qr,cr)
+    #         ghz_circuits.append(qc)
+    # ghz_rec_circuits=[]
+    # for i in range(2,8):
+    #     ghz_circuit = generate_ghz_logn(i)
+    #     for j in range(8-i):
+    #         qr = QuantumRegister(7)
+    #         cr = ClassicalRegister(7)
+    #         qc = QuantumCircuit(qr,cr)
+    #         qc.append(ghz_circuit, qr[j:j+i])
+    #         qc.measure(qr,cr)
+    #         ghz_rec_circuits.append(qc)
 
-    # Grover circuits
-    print("Generating Grover circuits")
-    grover_circuits=[]
-    with tqdm(total=868) as pbar:
-        for bits in range(3,8):
-            max_num = 2**(bits-1)
-            iterations = int(np.floor((np.pi/4)*np.sqrt(max_num)))
-            for itrs in range(1,iterations+1):
-                for num_to_find in range(max_num):
-                    grover_gate = grover_circuit(num_qubits=bits, num_iteration=itrs, num_to_find=num_to_find)
-                    for j in range(8-bits):
-                        qr = QuantumRegister(7)
-                        cr = ClassicalRegister(7)
-                        qc = QuantumCircuit(qr,cr)
-                        qc.append(grover_gate, qr[j:j+bits])
-                        qc.measure(qr,cr)
-                        grover_circuits.append(qc)
-                        pbar.update(1)
-    # QPE circuits
+    # # Grover circuits
+    # print("Generating Grover circuits")
+    # grover_circuits=[]
+    # with tqdm(total=868) as pbar:
+    #     for bits in range(3,8):
+    #         max_num = 2**(bits-1)
+    #         iterations = int(np.floor((np.pi/4)*np.sqrt(max_num)))
+    #         for itrs in range(1,iterations+1):
+    #             for num_to_find in range(max_num):
+    #                 grover_gate = grover_circuit(num_qubits=bits, num_iteration=itrs, num_to_find=num_to_find)
+    #                 for j in range(8-bits):
+    #                     qr = QuantumRegister(7)
+    #                     cr = ClassicalRegister(7)
+    #                     qc = QuantumCircuit(qr,cr)
+    #                     qc.append(grover_gate, qr[j:j+bits])
+    #                     qc.measure(qr,cr)
+    #                     grover_circuits.append(qc)
+    #                     pbar.update(1)
+    # # QPE circuits
     print("Generating QPE circuits")
     phases = [(np.random.randint(1,64))/64 for _ in range(20)]
     qpe_circuits = []
     for p in phases:
         qpe_circuits= qpe_circuits+get_qpe_circuits_for_phase(p)
-    test_dataset = qft_circuits + addition_circuits + ghz_rec_circuits + ghz_circuits + grover_circuits + qpe_circuits
-    return test_dataset
+    return qpe_circuits
+    # test_dataset = qft_circuits + addition_circuits + ghz_rec_circuits + ghz_circuits + grover_circuits + qpe_circuits
+    # return test_dataset
