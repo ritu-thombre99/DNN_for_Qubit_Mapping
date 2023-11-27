@@ -142,5 +142,5 @@ df["DNN with repair Depth"] = dnn_with_ro_depth
 df["DNN with repair CNOTs"] = dnn_with_ro_CNOT
 
 display(df)
-df.to_csv("models/test_dataset_result.csv")
+df.to_csv("models/test_dataset_result.csv",index=False)
 
