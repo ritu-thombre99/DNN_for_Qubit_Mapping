@@ -20,7 +20,7 @@ count_or = 0
 count_nr = 0
 count_mlp = 0
 count_mlp_edge = 0
-for qc_i in tqdm(range(len(test_dataset))):
+for qc_i in tqdm(range(len(test_dataset[:100]))):
     qc = test_dataset[qc_i]
     data = datetime.today() - timedelta(days=random.randint(1,150))
     backends = ['ibm_lagos','ibm_perth','ibm_nairobi']

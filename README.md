@@ -1,10 +1,10 @@
 # Work Log
 TODO:
-2. Save and test Neural Layout for larger circuits (4 hours)
-3. Add a new evaluation metric: the number of CNOT gates (CNOT gates are required to
+1. Save and test Neural Layout for larger circuits (4 hours)
+2. Add a new evaluation metric: the number of CNOT gates (CNOT gates are required to
 perform SWAPs) (2 hours): Create a different test dataset and test on it along with time taken to find the mapping
-4. Plotting all the results and organizing them (5 hours)
-5. Writing the final project report (10 hours)
+3. Plotting all the results and organizing them (5 hours)
+4. Writing the final project report (10 hours)
 
 DONE:
 1. create the dataset using IBM’s publicly available 7-qubit quantum computers (ibm_perth, ibm_lagos, ibm_nairobi)
