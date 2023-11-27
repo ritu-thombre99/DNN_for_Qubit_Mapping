@@ -29,41 +29,8 @@ from tensorflow.keras.models import Model
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
+from helper import *
 
-def clear_dataset(df, n_qubits):
-    df = df.drop_duplicates()
-    for i in range(n_qubits):
-        df = df.drop('measure_' + str(i), axis=1)
-    #Rimozione Features non interessanti
-    df = df.drop('N_measure', axis = 1)
-    # remove edges which are not in coupling maps
-    # connections = ['01','10','12','21','13','31','35','53','45','54','56','65']
-    connections = []
-    IBMQ.load_account()
-    provider = IBMQ.get_provider(hub='ibm-q')
-    provider.backends(simulator=False)
-    if n_qubits == 7:
-        backend = provider.get_backend('ibm_nairobi')
-        coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
-        for tup in coupling_map:
-            connections.append(str(tup[0])+str(tup[1]))
-    else:
-        backend = provider.get_backend('ibm_brisbane')
-        coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
-        for tup in coupling_map:
-            connections.append(str(tup[0])+str(tup[1]))
-    print("Connections:",connections)
-    to_keep = []
-    for c in connections:
-        to_keep.append("edge_error_"+c)    
-        to_keep.append("edge_length_"+c)
-    to_drop = []
-    for c in df.columns:
-        if "edge_error" in c or "edge_length" in c:
-            if c not in to_keep:
-                to_drop.append(c)
-    df = df.drop(to_drop,axis=1)
-    return df
 
 
 num_qubits = 7
@@ -83,32 +50,6 @@ edge_features -> ((t1_i,t2_i,readout_i),(t1_j,t2_j,readout_j),(edge_error_ij,edg
 """
 print("Creating dataset")
 
-def get_graph_features(input_df):
-    X = []
-    for i in tqdm(range(len(input_df))):
-        edge_features = []
-        for edge_i in range(num_qubits):
-            for edge_j in range(num_qubits):
-                if edge_i != edge_j:
-                    cx = input_df["cx_"+str(edge_i)+str(edge_j)][i]
-                    edge_error, edge_length  = 100000, 100000
-                    if "edge_error_"+str(edge_i)+str(edge_j) in df.columns:
-                        edge_error = input_df["edge_error_"+str(edge_i)+str(edge_j)][i]
-                        edge_length = input_df["edge_length_"+str(edge_i)+str(edge_j)][i]
-                    
-                    t1_i = input_df["T1_"+str(edge_i)][i]
-                    t2_i = input_df["T2_"+str(edge_i)][i]
-                    readout_i = input_df["readout_error_"+str(edge_i)][i]
-                
-                    t1_j = input_df["T1_"+str(edge_j)][i]
-                    t2_j = input_df["T2_"+str(edge_j)][i]
-                    readout_j = input_df["readout_error_"+str(edge_j)][i]
-                    
-                    
-                    edge_features.append(np.array([t1_i,t2_i,readout_i,t1_j,t2_j,readout_j,cx,edge_error,edge_length]))
-        X.append(np.array(edge_features).flatten())
-    X = np.array(X)
-    return X
 
 X = get_graph_features(df)
 
