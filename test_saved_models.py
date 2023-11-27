@@ -45,7 +45,7 @@ mlp_edge_depth, mlp_edge_CNOT = [],[]
 dnn_without_ro_depth,dnn_without_ro_CNOT = [],[] 
 dnn_with_ro_depth,dnn_with_ro_CNOT = [],[] 
 mlp_depth, mlp_CNOT = [],[]
-for qc_i in tqdm(range(len(test_dataset))):
+for qc_i in tqdm(range(len(test_dataset[:10]))):
     qc = test_dataset[qc_i]
     data = datetime.today() - timedelta(days=random.randint(1,150))
     backends = ['ibm_lagos','ibm_perth','ibm_nairobi']
@@ -141,6 +141,5 @@ df["DNN without repair CNOTs"] = dnn_without_ro_CNOT
 df["DNN with repair Depth"] = dnn_with_ro_depth
 df["DNN with repair CNOTs"] = dnn_with_ro_CNOT
 
-display(df)
 df.to_csv("models/test_dataset_result.csv",index=False)
 
