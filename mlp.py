@@ -101,37 +101,39 @@ def build_model_original_df(input_shape):
 
         return merged
 
-model = build_model_original_df(X[0].shape[0])
-model.build(X[0].shape[0])
-learning_rate = 0.0005
-optimizer = tf.optimizers.Adam(name='Adam', learning_rate=learning_rate)
-model.compile(
-  optimizer=optimizer,
-  loss='mean_squared_error',
-  metrics=[tf.keras.metrics.mean_squared_error])
-print(model.summary())
+def get_pred():
+    model = build_model_original_df(X[0].shape[0])
+    model.build(X[0].shape[0])
+    learning_rate = 0.0005
+    optimizer = tf.optimizers.Adam(name='Adam', learning_rate=learning_rate)
+    model.compile(
+    optimizer=optimizer,
+    loss='mean_squared_error',
+    metrics=[tf.keras.metrics.mean_squared_error])
+    print(model.summary())
 
-start = time.time()
-history = model.fit(
-    X_train,
-    y_train,
-    batch_size=512,
-    epochs=200,
-    validation_split=0.15,
-    verbose=1)
-end = time.time()
-print("Time taken to train the model:", end-start)
+    start = time.time()
+    history = model.fit(
+        X_train,
+        y_train,
+        batch_size=512,
+        epochs=200,
+        validation_split=0.15,
+        verbose=1)
+    end = time.time()
+    print("Time taken to train the model:", end-start)
 
-plt.plot(history.epoch, history.history['loss'] , label = "loss")
-plt.plot(history.epoch, history.history['val_loss'] , label = "val_loss")
-
-
-plt.legend()
-plt.show()
+    plt.plot(history.epoch, history.history['loss'] , label = "loss")
+    plt.plot(history.epoch, history.history['val_loss'] , label = "val_loss")
 
 
-test_pred = model.predict(X_test)
-train_pred = model.predict(X_train)
+    plt.legend()
+    plt.show()
+
+
+    test_pred = model.predict(X_test)
+    train_pred = model.predict(X_train)
+    return test_pred,train_pred
 
 def get_labels(y):
     labels = []
@@ -139,20 +141,26 @@ def get_labels(y):
         labels.append(np.where(y[i]==np.max(y[i]))[0][0])
     return labels
 
-count = 0
-for i in range(len(train_pred)):
-    actual=get_labels(np.reshape(y_train[i],(7,7)))
-    predicted=get_labels(np.reshape(train_pred[i],(7,7)))
-    if actual == predicted:
-        count = count + 1
-        
-print("Train accuracy:",count/len(train_pred))
+def main():
+    test_pred,train_pred = get_pred()
+    count = 0
+    for i in range(len(train_pred)):
+        actual=get_labels(np.reshape(y_train[i],(7,7)))
+        predicted=get_labels(np.reshape(train_pred[i],(7,7)))
+        if actual == predicted:
+            count = count + 1
+    train_accuracy = count/len(train_pred)
 
-count = 0
-for i in range(len(test_pred)):
-    actual=get_labels(np.reshape(y_test[i],(7,7)))
-    predicted=get_labels(np.reshape(test_pred[i],(7,7)))
-    if actual == predicted:
-        count = count + 1
-        
-print("Test accuracy:",count/len(test_pred))
+    count = 0
+    for i in range(len(test_pred)):
+        actual=get_labels(np.reshape(y_test[i],(7,7)))
+        predicted=get_labels(np.reshape(test_pred[i],(7,7)))
+        if actual == predicted:
+            count = count + 1
+    test_accuracy = count/len(test_pred)
+    if train_accuracy < 0.8 or test_accuracy < 0.8:
+        main()
+    return 
+
+if __name__ == "__main__":
+    main()

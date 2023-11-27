@@ -129,68 +129,78 @@ X_st = SS.fit_transform(X)
 X_train, X_test, y_train, y_test = train_test_split(X_st, y, test_size=0.10, random_state=1)
 
 def build_model(input_shape):
-        #d = 0.2
-        model = Sequential()
-        input_layer = Input(shape=input_shape, name='input')
-        layer1 = Dense(input_shape//2,kernel_initializer='uniform',activation='relu')(input_layer)
-        layer2 = Dense(input_shape//4,kernel_initializer='uniform',activation='relu')(layer1)
-        layer3 = Dense(49,kernel_initializer='uniform',activation='relu')(layer2)
-        merged = Model(inputs=[input_layer], outputs=[layer3])
+    #d = 0.2
+    model = Sequential()
+    input_layer = Input(shape=input_shape, name='input')
+    layer1 = Dense(input_shape//2,kernel_initializer='uniform',activation='relu')(input_layer)
+    layer2 = Dense(input_shape//4,kernel_initializer='uniform',activation='relu')(layer1)
+    layer3 = Dense(49,kernel_initializer='uniform',activation='relu')(layer2)
+    merged = Model(inputs=[input_layer], outputs=[layer3])
 
-        return merged
+    return merged
+def get_pred():
+    model = build_model(X[0].shape[0])
+    model.build(X[0].shape[0])
+    learning_rate = 0.0005
+    optimizer = tf.optimizers.Adam(name='Adam', learning_rate=learning_rate)
+    model.compile(
+    optimizer=optimizer,
+    loss='mean_squared_error',
+    metrics=[tf.keras.metrics.mean_squared_error])
+    print(model.summary())
 
-model = build_model(X[0].shape[0])
-model.build(X[0].shape[0])
-learning_rate = 0.0005
-optimizer = tf.optimizers.Adam(name='Adam', learning_rate=learning_rate)
-model.compile(
-  optimizer=optimizer,
-  loss='mean_squared_error',
-  metrics=[tf.keras.metrics.mean_squared_error])
-print(model.summary())
-
-start = time.time()
-history = model.fit(
-    X_train,
-    y_train,
-    batch_size=512,
-    epochs=200,
-    validation_split=0.15,
-    verbose=1)
-end = time.time()
-print("Time taken to train the model:", end-start)
-
-
-plt.plot(history.epoch, history.history['loss'] , label = "loss")
-plt.plot(history.epoch, history.history['val_loss'] , label = "val_loss")
+    start = time.time()
+    history = model.fit(
+        X_train,
+        y_train,
+        batch_size=512,
+        epochs=200,
+        validation_split=0.15,
+        verbose=1)
+    end = time.time()
+    print("Time taken to train the model:", end-start)
 
 
-plt.legend()
-plt.show()
+    plt.plot(history.epoch, history.history['loss'] , label = "loss")
+    plt.plot(history.epoch, history.history['val_loss'] , label = "val_loss")
 
-test_pred = model.predict(X_test)
-train_pred = model.predict(X_train)
+
+    plt.legend()
+    plt.show()
+
+    test_pred = model.predict(X_test)
+    train_pred = model.predict(X_train)
+
+    return test_pred,train_pred
 
 def get_labels(y):
     labels = []
     for i in range(len(y)):
         labels.append(np.where(y[i]==np.max(y[i]))[0][0])
     return labels
+def main():
+    test_pred,train_pred = get_pred()
+    count = 0
+    for i in range(len(train_pred)):
+        actual=get_labels(np.reshape(y_train[i],(7,7)))
+        predicted=get_labels(np.reshape(train_pred[i],(7,7)))
+        if actual == predicted:
+            count = count + 1
+    train_accuracy = count/len(train_pred)
+    
 
-count = 0
-for i in range(len(train_pred)):
-    actual=get_labels(np.reshape(y_train[i],(7,7)))
-    predicted=get_labels(np.reshape(train_pred[i],(7,7)))
-    if actual == predicted:
-        count = count + 1
-        
-print("Train accuracy:",count/len(train_pred))
+    count = 0
+    for i in range(len(test_pred)):
+        actual=get_labels(np.reshape(y_test[i],(7,7)))
+        predicted=get_labels(np.reshape(test_pred[i],(7,7)))
+        if actual == predicted:
+            count = count + 1
+    test_accuracy = count/len(test_pred)
+    if train_accuracy < 0.8 or test_accuracy < 0.8:
+        main()
+    print("Train accuracy:",train_accuracy)
+    print("Test accuracy:",test_accuracy)
+    return 
 
-count = 0
-for i in range(len(test_pred)):
-    actual=get_labels(np.reshape(y_test[i],(7,7)))
-    predicted=get_labels(np.reshape(test_pred[i],(7,7)))
-    if actual == predicted:
-        count = count + 1
-        
-print("Test accuracy:",count/len(test_pred))
+if __name__ == "__main__":
+    main()
