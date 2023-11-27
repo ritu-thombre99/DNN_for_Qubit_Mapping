@@ -1,10 +1,9 @@
 # Work Log
 TODO:
-1. Save and test Neural Layout for larger circuits (4 hours)
-2. Add a new evaluation metric: the number of CNOT gates (CNOT gates are required to
+1. Add a new evaluation metric: the number of CNOT gates (CNOT gates are required to
 perform SWAPs) (2 hours): Create a different test dataset and test on it along with time taken to find the mapping
-3. Plotting all the results and organizing them (5 hours)
-4. Writing the final project report (10 hours)
+2. Plotting all the results and organizing them (5 hours)
+3. Writing the final project report (10 hours)
 
 DONE:
 1. create the dataset using IBM’s publicly available 7-qubit quantum computers (ibm_perth, ibm_lagos, ibm_nairobi)
@@ -12,6 +11,7 @@ DONE:
 3. add sabrelayout method in label
 4. Created a new dataset for larger quantum circuits (7-qubit only but large depths).. This dataset includes circuits of different types,
 such as Grover’s circuit, Shor’s circuit, Quantum Fourier Transform, and various types of GHZ state preparation 
+5. save and test models (kinda done)
 
 # DNN_for_Mapping
 This is a repository in which you can find all the codes for implementing a Deep Neural Network to perform the mapping of virtual qubits 
