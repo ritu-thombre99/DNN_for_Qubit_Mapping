@@ -121,7 +121,11 @@ def get_pred():
         verbose=1)
     end = time.time()
     print("Time taken to train the model:", end-start)
-    np.savetxt("models/mlp_train_loss.txt", (np.array(history.history['loss']),np.array(history.history['val_loss'])), delimiter=",")
+
+    hist_df = pd.DataFrame(history.history) 
+    hist_csv_file = 'models/mlp_train_loss.csv'
+    with open(hist_csv_file, mode='w') as f:
+        hist_df.to_csv(f)
     plt.plot(history.epoch, history.history['loss'] , label = "loss")
     plt.plot(history.epoch, history.history['val_loss'] , label = "val_loss")
 

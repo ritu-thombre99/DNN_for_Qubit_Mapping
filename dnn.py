@@ -211,13 +211,16 @@ merged.compile(loss={'slot0':'categorical_crossentropy','slot1':'categorical_cro
 start = time.time()
 history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:8],'slot1':y_train[:,8:16],'slot2':y_train[:,16:24],'slot3':y_train[:,24:32],
                               'slot4':y_train[:,32:40],'slot5':y_train[:,40:48],'slot6':y_train[:,48:56]},
-           epochs=125, batch_size=128, verbose=1, validation_split=0.10, shuffle=True,
+           epochs=200, batch_size=128, verbose=1, validation_split=0.10, shuffle=True,
                      class_weight={0:class_weight_0, 1:class_weight_1, 2:class_weight_2,
                                      3:class_weight_3, 4:class_weight_4, 5:class_weight_5, 6:class_weight_6})
 
 end = time.time()
 print("Time taken to train model:",end-start)
-
+hist_df = pd.DataFrame(history.history) 
+hist_csv_file = 'models/dnn_train_loss.csv'
+with open(hist_csv_file, mode='w') as f:
+    hist_df.to_csv(f)
 ''''
 history = merged.fit({'input': X_train},  {'slot0': y_train[:,0:6],'slot1':y_train[:,6:12],'slot2':y_train[:,12:18],'slot3':y_train[:,18:24],
                               'slot4':y_train[:,24:30]},
@@ -319,6 +322,16 @@ for i in range(y_test.shape[0]):
 print('acc_Test', count_test/y_test.shape[0])
 print('acc_Test_nr', count_test_nr/y_test.shape[0])
 
+
+f = open("models/dnn_accuracy.txt","w")
+f.writelines('acc_Train:'+str(count_train/y_train.shape[0]))
+f.writelines('\nacc_Train_nr:'+str(count_train_nr/y_train.shape[0]))
+f.writelines('\nacc_Test:'+str(count_test/y_test.shape[0]))
+f.writelines('\nacc_Test_nr:'+ str(count_test_nr/y_test.shape[0]))
+f.writelines("\nTraining time:"+str(end-start))
+f.close()
+
+merged.save("models/dnn.keras")
 ''''
 output_dense_pred_train = y_pred_train[5]
 output_dense_pred_test = y_pred_test[5]
