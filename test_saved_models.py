@@ -45,7 +45,7 @@ mlp_edge_depth, mlp_edge_CNOT = [],[]
 dnn_without_ro_depth,dnn_without_ro_CNOT = [],[] 
 dnn_with_ro_depth,dnn_with_ro_CNOT = [],[] 
 mlp_depth, mlp_CNOT = [],[]
-for qc_i in tqdm(range(len(test_dataset[:10]))):
+for qc_i in tqdm(range(len(test_dataset[:150]))):
     qc = test_dataset[qc_i]
     data = datetime.today() - timedelta(days=random.randint(1,150))
     backends = ['ibm_lagos','ibm_perth','ibm_nairobi']
