@@ -19,12 +19,7 @@ from sklearn.metrics import mean_squared_error
 from tensorflow.keras.models import Sequential#,Input,Model
 from tensorflow.keras import Input
 from tensorflow.keras.layers import Dense, Dropout, Flatten
-from tensorflow.keras.layers import Conv2D, MaxPooling2D
-# from tensorflow import keras
-# from keras_layer_normalization import BatchNormalization
-# from keras_layer_normalization import LayerNormalization
-# from keras.layers.advanced_activations import LeakyReLU
-from tensorflow.keras.models import Model
+# from tensorflow.keras.layers import Conv2D, MaxPooling2D38
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
@@ -334,3 +329,39 @@ def get_labels(y):
     for i in range(len(y)):
         labels.append(np.where(y[i]==np.max(y[i]))[0][0])
     return labels
+
+# get times to generate dataframes
+# def get_df_time(circuit,backend_name,datatime,show=False,refresh=True):
+#     start = time.time()
+#     provider = IBMQ.get_provider(hub='ibm-q')
+#     provider.backends(simulator=False)
+#     backend = provider.get_backend(backend_name)
+#     basis_gats = backend.configuration().basis_gates
+#     # print(basis_gats)
+#     pass_ = Unroller(basis_gats)
+#     pm = PassManager(pass_)
+
+#     # new_circ = pm.run(circuit)
+#     # need to transpile before passing to run
+#     new_circ = transpile(circuit, backend=backend, optimization_level=0)
+#     new_circ = pm.run(new_circ)
+    
+#     size_backend = len(backend.properties(refresh=refresh).to_dict()['qubits'])
+#     CA = circuit_analysis(backend, circuit, size_backend=size_backend, show=show)
+#     BT = Backend_Topology(backend_name, refresh, show, datatime=datatime)
+#     QP = Qubit_properties(backend_name, refresh, datatime=datatime)
+    
+#     Title_names =['last_update_date', 'backend_name'] + list(CA.keys())[:3] + list(CA['cx'].keys()) + list(CA['measure'].keys()) + list(BT['coupling'].keys())
+#     for i in range(size_backend):
+#         for title in list(QP.keys())[2:]:
+#             Title_names.append(title+'_'+str(i))
+
+#     date_name = [BT['last_update_date'], BT['backend_name']]
+#     Values = date_name + list(CA.values())[:3] + list(CA['cx'].values()) + list(CA['measure'].values()) + list(BT['coupling'].values())
+#     for i in range(size_backend):
+#         for value in list(QP.keys())[2:]:
+#             Values.append(QP[value][i])
+#     df = pd.DataFrame([Values],columns = Title_names)
+#     df = clear_dataset(df, 7)
+#     end = time.time()
+#     return (end-start)

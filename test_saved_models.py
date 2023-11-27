@@ -45,6 +45,11 @@ mlp_edge_depth, mlp_edge_CNOT = [],[]
 dnn_without_ro_depth,dnn_without_ro_CNOT = [],[] 
 dnn_with_ro_depth,dnn_with_ro_CNOT = [],[] 
 mlp_depth, mlp_CNOT = [],[]
+
+dnn_time = []
+mlp_time = []
+mlp_edge_time = []
+sabre_time,na_time,dense_time = [],[],[]
 for qc_i in tqdm(range(len(test_dataset))):
     qc = test_dataset[qc_i]
     data = datetime.today() - timedelta(days=random.randint(1,150))
@@ -58,28 +63,39 @@ for qc_i in tqdm(range(len(test_dataset))):
     df = pd.DataFrame(d, index=[0])
     df = clear_dataset(df, 7)
     last_num_qubits = len(df.columns)-num_qubits
-
-    x = SS.fit_transform(df.iloc[:, 2:last_num_qubits].values)
     labels = ((df.iloc[:, last_num_qubits:].values)[0]).tolist()
     
-    predicted = dnn.predict(x)
+#     time_taken_to_get_df = get_df_time(qc,backend,data)
+#     print("Preprocess time:",time_taken_to_get_df)
+    time_taken_to_get_df = 0
     
+    start = time.time()
+    x = SS.fit_transform(df.iloc[:, 2:last_num_qubits].values)
+    predicted = dnn.predict(x)
     pred_or = np.array(pred_layout(predicted, num_qubits))[0].tolist()
     pred_nr = np.array(pred_layout_diff_elem(predicted,num_qubits))[0].tolist()
+    end = time.time()
+    dnn_time.append(time_taken_to_get_df + (end-start))
+    
     print(pred_or, pred_nr, labels)
     if(pred_or == labels):
         count_or = count_or + 1
     if(pred_nr == labels):
         count_nr = count_nr + 1
     
+    start = time.time()
     mlp_pred = get_labels(np.reshape(mlp.predict(x),(7,7)))
+    end = time.time()
+    mlp_time.append(time_taken_to_get_df + (end-start))
     print(mlp_pred)
     if mlp_pred == labels:
         count_mlp = count_mlp + 1
         
-        
+    start = time.time()
     x = SS.fit_transform(get_graph_features(df))
     mlp_edges_pred = get_labels(np.reshape(mlp_edge_feature.predict(x),(7,7)))
+    end = time.time()
+    mlp_edge_time.append(time_taken_to_get_df + (end-start))
     print(mlp_edges_pred)
     if mlp_edges_pred == labels:
         count_mlp_edge = count_mlp_edge + 1
@@ -90,6 +106,7 @@ for qc_i in tqdm(range(len(test_dataset))):
     original_depth.append(depth)
     original_CNOT.append(cx)
     print(original_depth[-1],original_CNOT[-1])
+    # NN with edge features
     if len(mlp_edges_pred) == len(set(mlp_edges_pred)):
         cx, depth = get_transpiled_circ_results(qc, backend, initial_layout=mlp_edges_pred)
         mlp_edge_depth.append(depth)
@@ -120,6 +137,34 @@ for qc_i in tqdm(range(len(test_dataset))):
     cx, depth = get_transpiled_circ_results(qc, backend, initial_layout=pred_nr)
     dnn_with_ro_depth.append(depth)
     dnn_with_ro_CNOT.append(cx)
+    
+#     # execution times
+    basis_gats = basis_gate_dict[backend]
+    pass_ = Unroller(basis_gats)
+    pm = PassManager(pass_)
+    backend = provider.get_backend(backend)
+    tqc = transpile(qc, backend=backend, optimization_level=0)
+    tqc = pm.run(tqc)
+    # noise adaptive time
+    start = time.time()
+    new_circ_lv3_na = transpile(tqc, backend=backend, optimization_level=0,layout_method='noise_adaptive')
+    new_circ_lv3_na._layout.get_physical_bits()
+    end = time.time()
+    na_time.append(end-start)
+    # sabre time
+    start = time.time()
+    new_circ_lv3_sabre = transpile(tqc, backend=backend, optimization_level=0,layout_method='sabre',routing_method='sabre')
+    new_circ_lv3_sabre._layout.get_physical_bits()
+    end = time.time()
+    sabre_time.append(end-start)
+    # dense time
+    start = time.time()
+    new_circ_lv3_dense = transpile(tqc, backend=backend, optimization_level=0)
+    new_circ_lv3_dense._layout.get_physical_bits()
+    end = time.time()
+    dense_time.append(end-start)
+    
+
 print("DNN accuracy without repair operator:", count_or/len(test_dataset))
 print("DNN accuracy with repair operator:", count_nr/len(test_dataset))
 print("MLP accuracy:", count_mlp/len(test_dataset))
@@ -140,6 +185,13 @@ df["DNN without repair CNOTs"] = dnn_without_ro_CNOT
 
 df["DNN with repair Depth"] = dnn_with_ro_depth
 df["DNN with repair CNOTs"] = dnn_with_ro_CNOT
+
+df["DNN Mapping time"] = dnn_time
+df["NN without edge features Mapping time"] = mlp_time
+df["NN with edge features Mapping time"] = mlp_edge_time
+df["SABRE mapping Mapping time"] = sabre_time
+df["Noise Adaptive Mapping time"] = na_time
+df["Dense Mapping time"] = dense_time
 
 df.to_csv("models/test_dataset_result.csv",index=False)
 
