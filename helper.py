@@ -45,7 +45,8 @@ provider.backends(simulator=False)
 
 backend_dict = {}
 # backend_names = ['ibm_brisbane','ibm_lagos','ibm_nairobi','ibm_perth']
-backend_names = ['ibm_lagos','ibm_nairobi','ibm_perth']
+# backend_names = ['ibm_lagos','ibm_nairobi','ibm_perth']
+backend_names = ['ibm_brisbane','ibm_kyoto']
 for backend_name in backend_names:
     backend = provider.get_backend(backend_name)
     coupling_map = IBMQBackend.configuration(backend).to_dict()['coupling_map']
