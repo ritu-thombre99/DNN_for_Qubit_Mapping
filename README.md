@@ -14,7 +14,11 @@ Specifically, our contributions are:
 
 ## Code
 `gnn-svm-rf.ipynb`  : Test accuracy results & model code for GNN model, SVM-RBF model and RF-Gini model.
-`mlp_graph_features.py`: 
+`mlp_graph_features.py`: Shallow MLP classifier model
+`models/mlp_edge_features_accuracy.txt`: Shallow MLP classifier training ans test accuracy
+`dnn.py`: Neural layout (Deep neural Network) model
+`models/mlp_edge_features_accuracy.txt`: Neural Layout (Deep Neural Network) training ans test accuracy
+`models/figures.ipynd`: Figures of various comparisons between models
 
 ## References
 [1] Giovanni Acampora and Roberto Schiattarella. Deep neural networks for quantum circuit mapping. Neural Computing and Applications, 33(20):13723–13743, 2021.
