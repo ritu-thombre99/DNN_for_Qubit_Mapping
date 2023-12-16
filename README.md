@@ -13,7 +13,7 @@ Specifically, our contributions are:
     * a geometrically motivated GNN model
 
 ## Code
-`gnn.ipynb`  : Test accuracy results & model code for GNN model, SVM-RBF model and RF-Gini model.
+`gnn-svm-rf.ipynb`  : Test accuracy results & model code for GNN model, SVM-RBF model and RF-Gini model.
 `mlp_graph_features.py`: 
 
 ## References
