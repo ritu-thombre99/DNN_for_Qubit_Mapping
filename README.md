@@ -1,20 +1,20 @@
-# Work Log
-TODO:
+# DNN for Qubit Mapping
+We reproduce, extend and benchmark the DNN model for Qubit Mapping from [1]
 
-1. Plotting all the results and organizing them (5 hours)
-2. Writing the final project report (10 hours)
+Specifically, our contributions are:
+* extended the DNN model from 5-qubits to 7-qubits by expanding the architecture naturally
+* created a new dataset of 7-qubit random circuits, following the dataset format as described
+* added Sabrelayout to the set of IBM algorithms for label generation
+* ran the reimplemented DNN model on the newly produced dataset and reproduced results similar to what was expected
+* created a new dataset of 7-qubit circuits of practical design and ran the DNN model on it without retraining to see if DNN can generalize
+* benchmarked DNN against
+    * the 2 best performing ML in [1]: RF-Gini and SVM-RBF
+    * a shallow multiclass classifier
+    * a geometrically motivated GNN model
 
-DONE:
-1. create the dataset using IBM’s publicly available 7-qubit quantum computers (ibm_perth, ibm_lagos, ibm_nairobi)
-2. Reproduce the results1 on our 7-qubit dataset (10 hours)
-3. add sabrelayout method in label
-4. Created a new dataset for larger quantum circuits (7-qubit only but large depths).. This dataset includes circuits of different types,
-such as Grover’s circuit, Shor’s circuit, Quantum Fourier Transform, and various types of GHZ state preparation 
-5. save and test models (kinda done)
-6. 1. Add a new evaluation metric: the number of CNOT gates (CNOT gates are required to perform SWAPs) 
+## Code
+`gnn.ipynb`  : Test accuracy results & model code for GNN model, SVM-RBF model and RF-Gini model.
+`mlp_graph_features.py`: 
 
-# DNN_for_Mapping
-This is a repository in which you can find all the codes for implementing a Deep Neural Network to perform the mapping of virtual qubits 
-of a quantum algorithm coded by a circuit into a physical processor's quantum bits. 
-
-There are scripts for the dataset collection using Qiskit Ranom Circuit generator and scripts to build the neural network model using Keras. 
+## References
+[1] Giovanni Acampora and Roberto Schiattarella. Deep neural networks for quantum circuit mapping. Neural Computing and Applications, 33(20):13723–13743, 2021.
