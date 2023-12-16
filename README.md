@@ -13,11 +13,11 @@ Specifically, our contributions are:
     * a geometrically motivated GNN model
 
 ## Code
+`dnn.py`: Neural layout (Deep neural Network) model
 `gnn-svm-rf.ipynb`  : Test accuracy results & model code for GNN model, SVM-RBF model and RF-Gini model.
 `mlp_graph_features.py`: Shallow MLP classifier model
-`models/mlp_edge_features_accuracy.txt`: Shallow MLP classifier training ans test accuracy
-`dnn.py`: Neural layout (Deep neural Network) model
-`models/mlp_edge_features_accuracy.txt`: Neural Layout (Deep Neural Network) training ans test accuracy
+`models/mlp_edge_features_accuracy.txt`: Shallow MLP classifier training and test accuracy
+`models/mlp_edge_features_accuracy.txt`: Neural Layout (Deep Neural Network) training and test accuracy
 `models/figures.ipynd`: Figures of various comparisons between models
 
 ## References
