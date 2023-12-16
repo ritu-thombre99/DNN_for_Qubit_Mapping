@@ -141,31 +141,31 @@ def return_dataset():
             qc.measure(qr,cr)
             qft_circuits.append(qc)
     # # Addition circuits
-    # print("Generating Addition circuits")
-    # addition_circuits = []
-    # with tqdm(total=10795) as pbar:
-    #     for bits in range(1,8):
-    #         max_num = 2**bits
-    #         for i in range(max_num):
-    #             for j in range(1,max_num):
-    #                 if i+j < max_num:
-    #                     qr = QuantumRegister(7)
-    #                     cr = ClassicalRegister(7)
-    #                     qc = QuantumCircuit(qr,cr)
-    #                     qft_gate = qft(num_qubits=bits,is_inverse=False)
-    #                     qc.append(qft_gate, qr[:bits])
+    print("Generating Addition circuits")
+    addition_circuits = []
+    with tqdm(total=10795) as pbar:
+        for bits in range(1,8):
+            max_num = 2**bits
+            for i in range(max_num):
+                for j in range(1,max_num):
+                    if i+j < max_num:
+                        qr = QuantumRegister(7)
+                        cr = ClassicalRegister(7)
+                        qc = QuantumCircuit(qr,cr)
+                        qft_gate = qft(num_qubits=bits,is_inverse=False)
+                        qc.append(qft_gate, qr[:bits])
 
-    #                     qc.append(subroutine_add_const(bits,i), qr[:bits])
-    #                     qc.append(subroutine_add_const(bits,j), qr[:bits])
+                        qc.append(subroutine_add_const(bits,i), qr[:bits])
+                        qc.append(subroutine_add_const(bits,j), qr[:bits])
 
-    #                     inverse_qft_gate = qft(num_qubits=bits,is_inverse=True)
-    #                     qc.append(inverse_qft_gate, qr[:bits])
-    #                     qc.measure(qr,cr)
+                        inverse_qft_gate = qft(num_qubits=bits,is_inverse=True)
+                        qc.append(inverse_qft_gate, qr[:bits])
+                        qc.measure(qr,cr)
 
-    #                     # counts = execute(qc,backend,shots=100).result().get_counts()
-    #                     # bin_val = int(list(counts.keys())[0],2)
-    #                     pbar.update(1)
-    #                     addition_circuits.append(qc)
+                        # counts = execute(qc,backend,shots=100).result().get_counts()
+                        # bin_val = int(list(counts.keys())[0],2)
+                        pbar.update(1)
+                        addition_circuits.append(qc)
     # GHZ circuits
     ghz_circuits=[]
     for i in range(2,8):
@@ -213,6 +213,6 @@ def return_dataset():
     for p in phases:
         qpe_circuits= qpe_circuits+get_qpe_circuits_for_phase(p)
     # return qpe_circuits
-    test_dataset = qft_circuits + ghz_rec_circuits + ghz_circuits + grover_circuits + qpe_circuits
-    # test_dataset = qft_circuits + addition_circuits + ghz_rec_circuits + ghz_circuits + grover_circuits + qpe_circuits
+    # test_dataset = qft_circuits + ghz_rec_circuits + ghz_circuits + grover_circuits + qpe_circuits
+    test_dataset = qft_circuits + addition_circuits + ghz_rec_circuits + ghz_circuits + grover_circuits + qpe_circuits
     return test_dataset
