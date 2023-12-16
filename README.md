@@ -13,6 +13,8 @@ Specifically, our contributions are:
     * a geometrically motivated GNN model
 
 ## Code
+`Dataset.py` : Generate dataset of random circuits (dataset is a csv file placed in `dataset/dataset_tesi/`)
+`get_test_datasets.py` : Generate practical circuits (QFT,QPE,ALUs,GHZ,Grover) which are returned in a list when the function `return_dataset()` is called  
 `gnn-svm-rf.ipynb`  : Test accuracy results & model code for GNN model, SVM-RBF model and RF-Gini model.
 `mlp_graph_features.py`: Shallow MLP classifier model
 `models/mlp_edge_features_accuracy.txt`: Shallow MLP classifier training ans test accuracy
