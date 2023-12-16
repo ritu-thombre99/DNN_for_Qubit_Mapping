@@ -13,14 +13,17 @@ Specifically, our contributions are:
     * a geometrically motivated GNN model
 
 ## Code
-`dnn.py`: Neural layout (Deep neural Network) model
-`Dataset.py` : Generate dataset of random circuits (dataset is a csv file placed in `dataset/dataset_tesi/`)
-`get_test_datasets.py` : Generate practical circuits (QFT,QPE,ALUs,GHZ,Grover) which are returned in a list when the function `return_dataset()` is called  
-`gnn-svm-rf.ipynb`  : Test accuracy results & model code for GNN model, SVM-RBF model and RF-Gini model.
-`mlp_graph_features.py`: Shallow MLP classifier model
+### Models & Results
+`dnn.py`                : Neural layout (Deep neural Network) model
+`gnn-svm-rf.ipynb`      : Test accuracy results & model code for GNN model, SVM-RBF model and RF-Gini model.
+`mlp_graph_features.py` : Shallow MLP classifier model
 `models/mlp_edge_features_accuracy.txt`: Shallow MLP classifier training and test accuracy
 `models/mlp_edge_features_accuracy.txt`: Neural Layout (Deep Neural Network) training and test accuracy
-`models/figures.ipynd`: Figures of various comparisons between models
+`models/figures.ipynd`  : Figures of various comparisons between models
+
+### Datasets
+`Dataset.py` : Generate dataset of random circuits (dataset is a csv file placed in `dataset/dataset_tesi/`)
+`get_test_datasets.py` : Generate practical circuits (QFT,QPE,ALUs,GHZ,Grover) which are returned in a list when the function `return_dataset()` is called  
 
 ## References
 [1] Giovanni Acampora and Roberto Schiattarella. Deep neural networks for quantum circuit mapping. Neural Computing and Applications, 33(20):13723–13743, 2021.
