@@ -27,3 +27,13 @@ Specifically, our contributions are:
 
 ## References
 [1] Giovanni Acampora and Roberto Schiattarella. Deep neural networks for quantum circuit mapping. Neural Computing and Applications, 33(20):13723–13743, 2021.
+
+## Python and conda equirements
+Conda environments:
+conda create --name dnn_for_qubit_mapping -c anaconda python=3.8.18 
+conda activate dnn_for_qubit_mapping
+conda deactivate
+
+To view environment in jupyter :
+conda install nb_conda_kernels
+conda install -n notebook_env nb_conda_kernels
